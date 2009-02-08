@@ -15,7 +15,9 @@ def viewseason(request, season_id=None, display_month=None):
 			season = Season.objects.get(start_date__lte = today, end_date__gte = today)
 		except:
 			#TODO: print error here
-			return render_to_response("/failed/")
+			error = "No Season Exists!"
+			return render_to_response("error.html",
+										{'error' : error,})
 		
 	else:
 		season = Season.objects.get(id = season_id)

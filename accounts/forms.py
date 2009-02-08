@@ -1,6 +1,6 @@
-from django import newforms as forms
+from django import forms
 from django.contrib.auth.models import User
-from django.newforms import ModelForm
+from django.forms import ModelForm
 from stswim.utils import generate_id, random_string
 from stswim.schedule.models import Household, Parent
 from stswim.accounts.models import RegistrationProfile

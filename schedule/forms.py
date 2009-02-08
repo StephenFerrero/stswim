@@ -1,9 +1,9 @@
 from django.conf import settings
-from django import newforms as forms
+from django import forms
 from django.contrib.formtools.wizard import FormWizard
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
-from django.newforms import ModelForm
+from django.forms import ModelForm
 from stswim.schedule.models import SEX_CHOICES, LESSON_TYPES, LESSON_STATUS, Student, Season, LessonSlot, Lesson
 from dateutil import rrule
 from datetime import timedelta

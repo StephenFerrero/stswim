@@ -1,12 +1,11 @@
 from stswim.utils import auto_render
 from stswim.pages.models import *
 from django.contrib.admin.views.decorators import staff_member_required
-from django import newforms as forms
+from django import forms
 from django.db import models
 from django.http import HttpResponse, HttpResponseRedirect
 from django.utils.encoding import force_unicode, smart_str
 from django.utils.translation import ugettext as _
-from django import newforms as forms
 from django.contrib.contenttypes.models import ContentType
 
 @staff_member_required

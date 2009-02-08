@@ -1,6 +1,8 @@
 from django.conf.urls.defaults import *
 from django.contrib import admin
 
+admin.autodiscover()
+
 
 urlpatterns = patterns('django.views.generic.simple',
 		       
@@ -25,7 +27,7 @@ urlpatterns += patterns('',
 		       (r'^admin/(.*)', admin.site.root),
 
 		       # Handle static files
-		       (r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': '/home/stephen/Projects/stswim/media'}),
+		       (r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': '/Users/stephen/Projects/stswim/media/'}),
 		       
 		       #content pages
 		       #(r'^(?P<page_slug>\w+)/$', 'pages.views.details'),
