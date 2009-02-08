@@ -12,7 +12,8 @@ def viewseason(request, season_id=None, display_month=None):
 	if not season_id:
 		today = date.today()
 		try:
-			season = Season.objects.get(start_date__lte = today, end_date__gte = today)
+			# TODO: This get statement does not work between seasons.
+			season = Season.objects.get(end_date__gte = today)
 		except:
 			#TODO: print error here
 			error = "No Season Exists!"
