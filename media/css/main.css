@@ -1,0 +1,445 @@
+/*************************************
+Main CSS File for SeaTurtleSwimSchool.com
+
+
+*************************************/
+
+body {
+	background: #00064c url("../img/bg.png") repeat-x;
+	font-family: Verdana, sans-serif;
+	color: #000000;
+	line-height: 1.4;
+	font-size: .9em;
+}
+
+a, a:visited {
+	color: #000066;
+	text-decoration: none;
+}
+
+a:hover {
+	color: #2fbdd6;
+	text-decoration: none;
+}
+
+h1 {
+	font-size: 3em;
+	color: #000066;
+	padding: 10px 0;
+}
+
+.sIFR-active h1 {
+	font-size: 5em;
+	visibility: hidden;
+	font-family: Verdana;
+	line-height: 1em;
+	padding: 0 0;
+}
+
+h2 {
+	font-size: 1.2em;
+	color: #000066;
+	padding: 10px 0;
+}
+
+h2 a, h2 a:visited{
+	text-decoration: none;
+	color: #000066;
+}
+
+h2 a:hover{
+	text-decoration: none;
+	color: #2fbdd6;
+}
+
+.sIFR-active h2 { 
+	font-size: 2em;
+	visibility: hidden;
+}
+
+h3 {
+	font-size: 1em
+}
+
+p {
+	margin: 5px 0 10px 10px;
+}
+
+ul {
+	
+}
+
+ol {
+	
+}
+
+table {
+	margin: 5px 0 5px 10px;
+}
+
+table.data th {
+	color: #fff;
+	background-color: #5793FD;
+	padding: 0 10px 0 10px;
+	border-left: 1px solid #fff;
+	border-right: 1px solid #fff;
+}
+
+table.data tr.even {
+	background-color: #EAF0FB;
+}
+
+table.data tr.odd {
+	background-color: #FFFFFF;
+}
+
+table.data td {
+	text-align: center;
+	padding: 4px 10px 4px 10px;
+	border: 1px solid #DDDDDD;
+}
+
+td.error {
+	background-color: #FFCCCD;
+}
+
+#wrapper {
+	width: 920px;
+	margin: auto;
+}
+
+#header {
+	height: 290px;
+	background: url("../img/header_bg.png") no-repeat;
+	margin: 0 0;
+	padding: 0 10px;
+}
+
+#logo {
+	margin: 80px 0 0 40px;
+}
+
+#navbar {
+	list-style: none;
+	display: block;
+}
+
+#navbar li {
+	position: relative;
+	list-style: none;
+}
+
+.sIFR-active #navbar li {
+	background: url("../img/button.png") no-repeat;
+	position: relative;
+	float: left;
+	height: 100px;
+	width: 105px;
+	padding-top: 5px;
+	list-style: none;
+	display: inline;
+}
+
+#navbar a{
+	background: url("../img/button.png") no-repeat;
+	float: left;
+	height: 65px;
+	width: 105px;
+	padding-top: 40px;
+	display: inline;
+	text-align: center;
+	text-decoration: none;
+	color: #000000;
+	font-weight: 600;
+}
+
+.sIFR-active #navbar a{
+	visibility: hidden;
+	font-family: Verdana;
+	line-height: 1em;
+}
+
+.sIFR-active #navbar li:hover {
+	background-position: 0 -105px;
+}
+
+#navbar a:hover {
+	background-position: 0 -105px;
+}
+
+#navbar a.current {
+	background-position: 0 -105px;
+}
+
+#nhome{
+	top: 30px;
+	left: 30px;
+}
+
+#nlessons {
+	top: 15px;
+	left: 110px
+}
+
+#nregister {
+	left: 190px
+}
+
+#ncalendar {
+	top: -30px;
+	left: 270px
+}
+
+#ncontact{
+	left: 340px
+}
+
+#content {
+	background: url("../img/body_bg.png");
+	padding: 40px 0 0 0;
+	width: 920px;
+}
+
+.home #turtlebg {
+	background: url("../img/home_col1_bg.png") no-repeat bottom left;
+	
+}
+
+#turtlebg {
+	background: url("../img/col1_bg.png") no-repeat bottom left;
+	margin: 0 10px 0 9px;
+	padding: 0 10px;
+	min-height:300px;
+}
+
+* html #turtlebg{
+	height:200px;
+}
+
+#singlecol {
+
+}
+
+#col1 {
+	width: 209px;
+	float: left;
+	clear: left;
+	padding: 50px 0 0 40px;
+}
+
+#col2 {
+	width: 580px;
+	float: right;
+	padding: 0 40px 0 10px;
+}
+
+/** Management Console Styles **/
+
+ul.management_menu {
+	padding: 5px 0 10px 0;
+}
+
+ul.management_menu li {
+	padding-left: 4px;
+}
+
+#people-search {
+	margin: 20px 0;
+	padding: 5px;
+	background-color: #F5F5F5;
+	border: 1px solid #DDD;
+}
+
+#search-results {
+	padding: 0 10px 0 10px;
+}
+
+/** Generic Detail Page Styles **/
+
+table.detail {
+	border: 1px solid #CCCCCC;
+}
+
+table.detail tr {
+	border-bottom: 1px solid #EEEEEE;
+	padding: 10px 4px 10px 4px;
+}
+
+table.detail th {
+	text-align: left;
+	width: 96px;
+	padding: 10px 4px 10px 4px;
+}
+
+table.detail td {
+	padding: 10px 4px 10px 4px;
+}
+
+/** Parent Detail Page Styles  **/
+
+#parent_detail_name {
+	
+}
+
+#parent_detail_contact {
+	
+}
+
+#parent_detail_address {
+	
+}
+
+
+/** Season Calendar Styles  **/
+
+#calendar_controls {
+	text-align: center;
+	clear: both;
+}
+
+.monthtitle {
+	width: 300px;
+	margin: auto;
+}
+
+.prev_month {
+
+}
+
+.next_month {
+
+}
+
+.season_month_cal {
+	margin: auto;
+	clear: both;
+	background-color: #EEEEEE;
+}
+
+.season_month_cal .Sun,
+.season_month_cal .Sat {
+	display: none;
+}
+
+.season_month_cal .today {
+	background-color: #FFFFCC;
+}
+
+.season_month_cal th {
+	color: #000;
+	width: 160px;
+	background-color: #ffffff;
+}
+
+.season_month_cal th.Sun,
+.season_month_cal th.Sat  {
+	width: 80px;
+}
+
+.season_month_cal td{
+	border: 1px solid #999999;
+	border-top: 0px;
+}
+
+
+.season_month_cal td.date{
+	background: #3377CC;
+	border: 1px solid #999999;
+	border-bottom: 0px;
+}
+
+.calendar_lesson_open {
+	font-weight: bold;
+	color: green;
+}
+
+.calendar_lesson_closed,
+.calendar_lesson_booked {
+	color: grey;
+}
+
+.home #footer {
+	background: url("../img/home_footer_bg.png");
+	height: 50px;
+}
+
+
+#footer {
+	background: url("../img/footer_bg.png");
+	height: 50px;
+}
+
+#footer a {
+
+}
+
+#footer a:hover {
+	color: #000000;
+}
+
+#footerlinks {
+	text-align: center;
+	color: #4386c7;
+	font-size: .7em;
+	margin-bottom: 5px;
+}
+
+#footerlinks li {
+	list-style: none;
+	display: inline;
+}
+
+#footerlinks  a{
+	text-decoration: none;
+	margin: 0 10px;
+	color: #4386c7;
+}
+
+#copyright {
+	text-align: center;
+	padding: 0 20px 0 0;
+	font-size: .7em;
+	color: #616161;
+}
+
+#siteby {
+	clear: both;
+	text-align: center;
+	font-size: .7em;
+	margin-right: 20px;
+	color: #616161;
+}
+
+#siteby a {
+	color: #616161;
+	text-decoration: none;
+}
+
+#siteby a:hover{
+	color: #4386c7;
+}
+
+.center {
+	margin: auto;
+}
+
+.textright {
+	text-align: right;
+}
+
+.textleft {
+	text-align: left;
+}
+
+.clear {
+	clear: both;
+}
+
+.floatright {
+	float: right;
+}
+
+.hidden {
+	display: none;
+}
+

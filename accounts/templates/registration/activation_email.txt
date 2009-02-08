@@ -1,0 +1,17 @@
+Hello,
+
+Please complete the following next step to activate your SeaTurtle Swim School online account:
+
+1) Please click on the following link, or copy and paste into your broswer's address bar:
+	
+		http://www.seaturtleswim.com/accounts/activate/{{ activation_key }}
+
+{% if expires %}}
+You have {{ expiration_days }} days until this activation key expires. If you still wish to activate
+after your key has expired, simply fill out the registration form again here:
+	
+		http://www.seaturtleswim.com/accounts/register
+		
+{% endif %}
+	
+Thank You for choosing Sea Turtle Swim School!

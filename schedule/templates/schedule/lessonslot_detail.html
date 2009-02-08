@@ -1,0 +1,78 @@
+{% extends 'schedule/base_manage.html' %}
+
+{% block title %}Viewing {{ lessonslot.date|date:"n/j/y" }} {{ lessonslot.start_time|time:"g:i a" }}{% endblock %}
+
+{% block manage_content %}
+<h2> Lessonslot Detail:</h2>
+<table class="detail">
+	<tr>
+		<th>Date:</th>
+		<td>{{ lessonslot.date|date:"D M j Y" }}</td>
+	</tr>
+	<tr>
+		<th>Start Time:</th> 
+		<td>{{ lessonslot.start_time|time:"g:i a" }}</td>
+	</tr>
+	<tr>
+		<th>End Time:</th> 
+		<td>{{ lessonslot.end_time|time:"g:i a" }}</td>
+	</tr>
+	<tr>
+		<th>Status:</th> 
+		<td>{{lessonslot.status}}</td>
+	</tr>
+</table>
+	
+	{% if lessonslot.lesson %}<br />
+	<h3>Lesson Information:</h3>
+	<a href="{% url delete_lesson lesson_id=lessonslot.lesson.id %}">Delete Lesson</a>
+	 <a href="{% url edit_lesson lesson_id=lessonslot.lesson.id %}">Edit Lesson</a>
+		<div id="lessonslotdetail_students">
+		<table class="detail">
+			<tr>
+				<th>Lesson Status</th>
+				<td>{{ lessonslot.lesson.status }}</td>
+			</tr>
+			<tr>
+				<th>Lesson Type:</th>
+				<td>{{ lessonslot.lesson.lesson_type }}</td>
+			</tr>
+			<tr>
+				<th>Students:</th>
+				<td>
+				{% for student in lessonslot.lesson.students.all %}
+					<a href="{% url view_household household_id=student.household.id %}">{{ student.first_name }} {{ student.last_name }}</a>
+					<a href="{% url remove_studentfromlesson lesson_id=lessonslot.lesson.id, student_id=student.id %}">Remove</a><br />
+				{% endfor %}
+				</td>
+			</tr>
+			{% if lessonslot.lesson.intructor %}
+			<tr>
+				<th>Instructor:</th>
+				<td>{{ lessonslot.lesson.intructor.first_name }} {{ lessonslot.lesson.intructor.last_name }}</td>
+			</tr>
+			{% endif %}
+			</tr>
+		</table>
+			<a class="floatright" href="{% url add_studenttolesson lesson_id=lessonslot.lesson.id %}">Add Student</a>
+			<br /><br />
+		</div>
+		
+	{% endif %}
+	
+	{% if not lessonslot.lesson %}
+		{% ifequal lessonslot.status "Open" %}
+		<a href="/schedule/lesson/add">Add Lesson</a>
+		{% endifequal %}
+	{% endif %}
+	
+	{% ifequal lessonslot.status "Open" %}
+		<a href="/schedule/lessonslot/{{lessonslot.id}}/close">Close Slot</a>
+	{% endifequal %}
+	
+	{% ifequal lessonslot.status "Closed" %}
+		<a href="/schedule/lessonslot/{{lessonslot.id}}/open">Open Slot</a>
+	{% endifequal %}
+	<br /><br />
+	<a href="/schedule/season/{{ lessonslot.season.id }}/view/month/{{ lessonslot.date|date:"m" }}/">Back to Calendar</a>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends 'schedule/base_manage.html' %}
+
+	
+{% block manage_content %}
+	<h2>Students:</h2>
+	{% if not object_list %}
+		There are no students.
+	{% else %}
+	<table class="data">
+	<th>Last Name</th>
+	<th>First Name</th>
+	<th>Liability Form</th>
+	<th>Household</th>
+	{% for student in object_list %}
+		<tr class="{% cycle even,odd %}">
+			<td class="textleft"><a href="{% url view_student student_id=student.id %}">{{ student.last_name }}</a></td>
+			<td class="textleft">{{student.first_name }}</td>
+			<td class="{% if student.has_liabilityform %}{% else %}error{% endif %}">{% if student.has_liabilityform %} Yes {% else %} No {% endif %}</td>
+			<td><a href="{% url view_household household_id=student.household.id %}">View</a>
+		</tr>
+	{% endfor %}
+	</table>
+	{% endif %}
+{% endblock %}

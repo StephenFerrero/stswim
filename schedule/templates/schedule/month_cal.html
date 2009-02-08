@@ -1,0 +1,61 @@
+<!--TODO: Change these urls to be dynamic using  url -->
+	{% if user.is_staff %}
+		<a class="floatright" href="{% url manage_schedule %}">Back to Management Dashboard</a>
+	{% endif %}
+<div id="calendar_controls">
+	<a class="prev_month" href="/schedule/season/{{ season.id }}/view/month/{{ prev_month }}">Prev Month</a>
+	<h1 class="monthtitle"><span class="monthtitle">{{ current_month }}</span></h1>
+	<a class="next_month" href="/schedule/season/{{ season.id }}/view/month/{{ next_month }}">Next Month</a>
+</div>
+	
+<table class="season_month_cal">
+	{% for week in calendar %}
+		<tr>
+			{% for day in headers %}
+				<th class="center {{ day|date:"D"|slice:":3" }}">{{ day|date:"D"|slice:":3" }}</th>
+			{% endfor %}
+		</tr>
+		<tr>
+			{% for d in week %}
+				{% if perms.schedule.can_viewfullschedule %}
+					<td class="textright {{ d.day|date:"D"|slice:":3" }} date"><a href="{% url view_season_byday year=d.day.year, month=d.day.month, day=d.day.day %}">{{ d.day|date:"d" }}</a></td>
+				{% else %}
+					<td class="textright {{ d.day|date:"D"|slice:":3" }} date">{{ d.day|date:"d" }}</td>
+				{% endif %}
+			{% endfor %}
+		</tr>
+		<tr>
+		{% for day in week %}
+		<td class="{{ day.day|date:"D"|slice:":3" }} {% ifequal day.day today %}today{% endifequal %}">
+		<!-- lesson is actually lessonslot here -->
+			{% for lesson in day.lessons %}
+				{% if perms.schedule.can_viewfullschedule %}
+				<!--TODO: Change these urls to be dynamic using  url -->
+				<a href="/schedule/lessonslot/{{lesson.id}}/view/">
+				<span class="{% ifequal lesson.status "Closed" %}calendar_lesson_closed{% endifequal %}
+					{% ifequal lesson.status "Booked" %}calendar_lesson_booked{% endifequal %}
+					{% ifequal lesson.status "Open" %}calendar_lesson_open{% endifequal %}">
+				{{ lesson.start_time|time:"g:i a" }} - 
+					{% if not lesson.lesson.status %}{{ lesson.status }}
+					{% else %}{{ lesson.lesson.status }}
+					{% endif %}
+				</span>
+				</a>
+				{% else %}
+				<span class="{% ifequal lesson.status "Closed" %}calendar_lesson_closed{% endifequal %}
+					{% ifequal lesson.status "Booked" %}calendar_lesson_booked{% endifequal %}
+					{% ifequal lesson.status "Open" %}calendar_lesson_open{% endifequal %}">
+				{{ lesson.start_time|time:"g:i a" }} -
+					{% if not lesson.lesson.status %}{{ lesson.status }}
+					{% else %}{{ lesson.lesson.status }}
+					{% endif %}
+				{% endif %}
+				</span>
+				<br />
+			{% endfor %}
+			<br />
+		</td>
+		{% endfor %}
+		</tr>
+	{% endfor %}
+</table>

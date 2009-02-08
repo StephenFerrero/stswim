@@ -1,0 +1,28 @@
+{% extends 'main2col.html' %}
+{% block title %}Create an account{% endblock %}
+
+{% block col2 %}
+  <h1>Create an account</h1>
+  <form action="." method="post">
+    {% if form.error_dict %}
+      <p class="error">Please correct the errors below.</p>
+    {% endif %}
+
+    {% if form.username.errors %}
+      {{ form.username.html_error_list }}
+    {% endif %}
+    <label for="id_username">Username:</label> {{ form.username }}
+
+    {% if form.password.errors %}
+      {{ form.password.html_error_list }}
+    {% endif %}
+    <label for="id_password">Password: {{ form.password }}
+
+    {% if form.password2.errors %}
+      {{ form.password2.html_error_list }}
+    {% endif %}
+    <label for="id_password2">Password (again): {{ form.password2 }}
+
+    <input type="submit" value="Create the account" />
+  </label>
+{% endblock %}

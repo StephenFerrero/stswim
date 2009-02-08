@@ -1,0 +1,21 @@
+{% extends 'main2col.html' %}
+{% load pages_tags %}
+
+{% block body_class %}
+	page, {{ page_slug }}
+{% endblock %}
+
+{% block title %}
+	{{ page_title }}
+{% endblock %}
+
+{% block col1 %}
+	<ul>
+	    {% show_menu page_id %}
+	</ul>
+{% endblock %}
+
+{% block col2 %}
+	<h1>{{ page_title }}</h1>
+	{{ page_content|safe }}
+{% endblock %}

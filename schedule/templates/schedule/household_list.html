@@ -1,0 +1,8 @@
+{% extends 'schedule/base_manage.html' %}
+
+	
+{% block manage_content %}
+	{% for household in object_list %}
+		{% for parent in household.parent_set.all[:1] %} {{ parent.first_name }} {{parent.last_name }}<br />{% endfor %}
+	{% endfor %}
+{% endblock %}

@@ -1,0 +1,84 @@
+{% extends 'main2col.html' %}
+
+{% block title %}Sea Turtle Swim School Schedule Management System{% endblock %}
+{% block external %}<script src="/media/js/search.js" type="text/javascript"></script>{% endblock %}
+{% block col1 %}	
+	<a href="{% url stswim.schedule.admin_views.manageschedule %}">Dashboard</a><br /><br />
+	<h3>View</h3>
+	<ul class="management_menu">
+		{% if perms.schedule.can_viewparents %}
+			<li><a href="{% url list_parents %}">Parents</a></li>
+		{% endif %}
+		{% if perms.schedule.can_viewstudents %}
+			<li><a href="{% url list_students %}">Students</a></li>
+		{% endif %}
+		<li><a href="{% url view_currentseason  %}">Current Season</a></li>
+		<li><a href="{% url list_seasons %}">Seasons</a></li>
+	</ul>
+	{% if perms.schedule.can_addparent or perms.schedule.can_booklesson or perms.schedule.can_addlessonslot or perms.schedule.can_addseason %}
+		<h3>Tools</h3>
+		<ul class="management_menu">
+			{% if perms.schedule.can_addparent %}
+				<li><a href="{% url add_parent %}">Add Parent</a></li>
+			{% endif %}
+			{% if perms.schedule.can_booklesson %}
+				<li><a href="{% url add_lesson %}">Book Lesson</a></li>
+			{% endif %}
+			{% if perms.schedule.can_addlessonslot %}
+				<li><a href="{% url stswim.schedule.admin_views.addlessonslot %}">Add Lesson Slots</a></li>
+			{% endif %}	
+			{% if perms.schedule.can_addseason %}
+				<li><a href="{% url stswim.schedule.admin_views.addseason %}">Add Season</a></li>
+			{% endif %}
+		{% endif %}
+	
+{% endblock %}
+
+{% block col2 %}
+	<p class="floatright">
+		{% if user.is_authenticated %}
+			Hello {{ user.first_name }}! <a href="{% url logout %}">logout</a>
+		{% else %}
+			Please <a href="{% url login %}">Login</a>
+		{% endif %}
+	</p><br />
+	
+	{% block manage_content %}
+	<h2>Management Dashboard</h2>
+		<div id="people-search">
+			<h3>People Search</h3>
+			<form id="search-form" method="get" action=".">
+				<p>
+				{{ form }}
+				<input type="submit" value="search" />
+				</p>
+			</form>
+			
+			<div id="search-results">
+			{% if show_results %}
+				{% include 'schedule/people_list.html' %}
+			{% endif %}
+			</div>
+		</div>
+		
+	{% if todayslessonslots %}
+		<h3>Today's Lessons:</h3>
+		 <table class="data">
+		 <tr><th>Time</th><th>Type</th><th>Student(s)</th><th>Instructor</th></tr>
+		 	{% for lessonslot in todayslessonslots %}
+		 		<tr class="{% cycle even,odd %}">
+		 			<td><a href="{% url view_lessonslot lessonslot_id=lessonslot.id %}">{{lessonslot.start_time|time:"g:i a"}}</a></td>
+		 			<td>{{lessonslot.lesson.lesson_type}}</td>
+		 			<td>{% for student in lessonslot.lesson.students.all %}{{student.first_name}}, {% endfor %}</td>
+		 			<td>{{lessonslot.intructor}}</td>
+		 		</tr>
+		 	{% endfor %}
+		 </table>
+	{% else %}
+		<h3>No Lessons Today</h3>
+	{% endif %}
+			
+	{% endblock %}
+
+	
+{% endblock %}

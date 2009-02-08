@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div id="col1">
+	{% block col1 %}
+	{% endblock %}
+</div>
+<div id="col2">
+	{% block col2 %}
+	<h1>Welcome</h1>
+	<p>Sea Turtle Swim School offers swimming lessons during the summer season for all ages. 
+	Each lesson is adjusted to your student's unique learning style. Our instructors love 
+	what they do and it shows! We believe there can be no measure for the importance of being 
+	safe and comfortable around water which is why we offer a variety of lessons to fit your needs.</p>
+	<br /><h3 class="center">Swim Season 2009 <br />Starts May 3rd</h3>
+	<p class="center"><a href="/register">Sign up today</a></p;>
+	{% endblock %}
+</div>
+<div class="clear"></div>
+{% endblock %}

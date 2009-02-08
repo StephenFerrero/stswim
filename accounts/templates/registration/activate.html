@@ -1,0 +1,14 @@
+{% extends "main2col.html" %}
+
+{% block col2 %}
+	
+{% if account %}
+	Thank you {{ account.first_name }},<br /><br />
+	
+	Your account is now activated.
+
+{% else %}
+	Sorry that is an incorrect or expired activation key. Please try registering again.
+{% endif %}
+	
+{% endblock %}

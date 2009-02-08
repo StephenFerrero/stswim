@@ -1,0 +1,19 @@
+{% load pages_tags %}
+<td {% if level %}style="padding-left:{{level}}em"{% endif %}>
+    <a href="{{ url }}{{ page.id }}/"  style="margin-right:1em;">{{ page.title }}</a>
+   
+    {% if page.siblings.count %}
+    <span class="up-down">
+        {% if not page.is_first %}<a href="{{ url }}{{ page.id }}/up/" class="pages-up">up</a>{% endif %}
+        {% if not page.is_last and not node.is_first %}<span style="font-weight:normal">|</span>{% endif %}
+        {% if not page.is_last %}<a href="{{ url }}{{ page.id }}/down/" class="pages-down">down</a>{% endif %}
+    </span>
+    {% endif %}
+</td>
+{% if children.count %}
+</tr>
+{% for child in children %}
+    <tr>{% show_admin_menu child url level %}</tr>
+{% endfor %}
+<tr>
+{% endif %}

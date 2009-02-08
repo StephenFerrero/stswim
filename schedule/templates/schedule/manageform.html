@@ -1,0 +1,13 @@
+{% extends 'schedule/base_manage.html' %}
+
+	
+{% block manage_content %}
+	<h2>{{ form_title }}</h2>
+	<p>{{ form_instructions }}</p>
+	<form action="." method="POST">
+        <table>
+            {{ form.as_table }}
+        </table>
+        <p><input type="submit" value="Submit"></p>
+    </form>	
+{% endblock %}

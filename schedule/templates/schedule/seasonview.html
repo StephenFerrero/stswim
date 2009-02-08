@@ -1,0 +1,9 @@
+{% extends 'main1col.html' %}
+
+{% load schedule_tags %}
+
+{% block title %}Viewing {{season.name}} Season{% endblock %}
+
+{% block singlecol %}
+	{% season_month_cal %}
+{% endblock %}

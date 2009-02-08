@@ -1,0 +1,11 @@
+{% load pages_tags %}
+
+<li><h2><a href="{{parent.get_absolute_url }}">{{ parent.title }}</a></h2>
+	{% if children %}
+	<ul>
+	{% for child in children %}
+		<li><h2><a href="{{ child.get_absolute_url }}">{{ child.title }}</a></li></h2>
+	{% endfor %}
+	</ul>
+	{% endif %}
+</li>

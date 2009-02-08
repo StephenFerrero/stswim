@@ -1,0 +1,24 @@
+{% extends "main1col.html" %}
+
+{% block content %}
+<p>Step {{ step }} of {{ step_count }}</p>
+<form action="." method="post">
+<table>
+{{ form }}
+</table>
+{% ifequal step 2 %}
+{% if unavailable_slots %}
+	<p>The following lesson slots were unavailable:</p>
+	<ul>
+	{% for slot in unavailable_slots %}
+		<li>{{ slot.date }} {{ slot.start_time|time:"g:i a" }} - {{ slot.status }}</li>
+	{% endfor %}
+	</ul>
+{% endif %}
+{% endifequal %}
+
+<input type="hidden" name="{{ step_field }}" value="{{ step0 }}" />
+{{ previous_fields|safe }}
+<input type="submit">
+</form>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends 'schedule/base_manage.html' %}
+
+{% block title %}Student Detail{% endblock %}
+
+{% block col2 %}
+	<h2>Student Details:</h2>
+	<a href="{% url stswim.schedule.admin_views.editstudent student_id=student.id %}">Edit</a>
+	<table class="detail">
+		<tr>
+			<th>Name:</th>
+			<td>{{ student.first_name }} {{student.last_name }}</td>
+		</tr>
+		<tr>
+			<th>Birth Day:</th> 
+			<td>{{ student.birth_date }}</td>
+		</tr>
+		<tr>
+			<th>Liability Form:</th> 
+			<td class="{% if student.has_liabilityform %}{% else %}error{% endif %}">{% if student.has_liabilityform %} Yes {% else %} No {% endif %}</td>
+		</tr>
+	</table>
+	
+	<h3>{{ student.first_name}}'s Lessons</h3>
+	{% if lessons %}
+		<table class="data">
+			<tr><th>Day</th><th>Date</th><th>Start Time</th><th>Type</th><th>Status</th><th>Students</th></tr>
+			{% for lesson in lessons %}
+			<tr class="{% cycle even,odd %}">
+				<td>{{ lesson.lessonslot_set.all.0.date|date:"D" }}</td>
+				<td><a href="{% url view_lessonslot lessonslot_id=lesson.lessonslot_set.all.0.id %}">{{ lesson.lessonslot_set.all.0.date|date:"m/d/y" }}</a></td>
+				<td>{{ lesson.lessonslot_set.all.0.start_time|time:"g:i" }}</td>
+				<td>{{ lesson.lesson_type }}</td>
+				<td>{{ lesson.status }}</td>
+				<td>{% for student in lesson.students.all %}{{ student.first_name }}, {% endfor %}</td>
+			</tr>
+			{% endfor %}
+		</table>
+	{% endif %}
+{% endblock %}

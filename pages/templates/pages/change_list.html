@@ -1,0 +1,61 @@
+{% extends "admin/base_site.html" %}
+{% load adminmedia admin_list %}
+{% load pages_tags %}
+{% block title %}List of pages{% endblock %}
+{% block stylesheet %}{% admin_media_prefix %}css/changelists.css{% endblock %}
+{% block bodyclass %}change-list{% endblock %}
+{% if not is_popup %}{% block breadcrumbs %}<div class="breadcrumbs"><a href="../../"></a> &rsaquo; {{ opts.verbose_name_plural|capfirst|escape }}</div>{% endblock %}{% endif %}
+{% block coltype %}flex{% endblock %}
+{% block extrastyle %}
+<style>
+.pages-up {
+background:url(/adminmedia/img/admin/arrow-up.gif) left center no-repeat;
+padding-left:12px;
+}
+.pages-down {
+background:url(/adminmedia/img/admin/arrow-down.gif) left center no-repeat;
+padding-left:12px;
+}
+.up-down{
+    background:#eee;
+}
+tr{
+    padding-left:1em;
+}
+</style>
+{% endblock %}
+{% block content %}
+<div id="content-main">
+{% block object-tools %}
+{% if has_add_permission %}
+<ul class="object-tools"><li><a href="add/{% if is_popup %}?_popup=1{% endif %}" class="addlink">{{ title }}</a></li></ul>
+{% endif %}
+{% endblock %}
+<h1>Select page to change</h1>
+
+<ul class="object-tools"><li><a href="add/" class="addlink">Add page</a></li></ul>
+
+<div class="module" id="changelist">
+
+<table cellspacing="0">
+<thead>
+<tr>
+<th>pages</th>
+</tr>
+</thead>
+<tbody>
+
+{% for page in pages %}
+<tr>
+    {% show_admin_menu page %}
+</tr>
+{% endfor %}
+
+</tbody>
+</table>
+
+
+</div>
+</div>
+</div>
+{% endblock %}
