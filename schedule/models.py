@@ -137,19 +137,18 @@ class Lesson(models.Model):
 #Lesson Slots are time slots that lessons fit into. Slots can be open, closed, booked etc...        
 class LessonSlot(models.Model):
     season = models.ForeignKey(Season, null=True, blank=True)
-    start_time = models.TimeField()
-    end_time = models.TimeField()
-    date = models.DateField()
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField()
     weekday = models.IntegerField()
     lesson = models.ForeignKey(Lesson, null=True, blank=True)
     instructor = models.ForeignKey(Employee, null=True, blank=True)
     status = models.CharField(choices=LESSONSLOT_STATUS, max_length=30)
     
     class Meta:
-        ordering = ['date', 'start_time']
+        ordering = ['start_date']
     
     def __unicode__(self):
-        return '%s %s' % (self.date, self.start_time)
+        return '%s %s' % (self.start_date.date(), self.start_date.time())
         
     def close(self):
         self.status = 'Closed'

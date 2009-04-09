@@ -5,8 +5,8 @@ from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.forms import ModelForm
 from stswim.schedule.models import SEX_CHOICES, LESSON_TYPES, LESSON_STATUS, Student, Season, LessonSlot, Lesson
-from dateutil import rrule
-from datetime import timedelta
+from dateutil.rrule import *
+from datetime import timedelta, datetime
 
 class PersonSearchForm(forms.Form):
 	query = forms.CharField(
@@ -61,7 +61,7 @@ class AddSeasonForm(forms.Form):
 		new_season.save()
 		return new_season.id
 
-#Need to validate against existing  lessonslots		
+#Need to validate against existing lessonslots		
 class AddLessonSlotForm(forms.Form):
 	"Adds a new lesson slot"
 	season = forms.ModelChoiceField(Season.objects.all())
@@ -72,11 +72,14 @@ class AddLessonSlotForm(forms.Form):
 	thu = forms.BooleanField(required=False)
 	fri = forms.BooleanField(required=False)
 	sat = forms.BooleanField(required=False)
-	start_date = forms.DateField()
-	end_date = forms.DateField()
+	start_day = forms.DateField()
+	end_day = forms.DateField()
 	start_time = forms.DateTimeField(input_formats = settings.TIME_INPUT_FORMATS, help_text='All lessonslots are 30 min.')
 
 	def save(self):
+		start_day = self.cleaned_data['start_day']
+		end_day = self.cleaned_data['end_day']
+		
 		selected_weekdays = []
 		if self.cleaned_data['sun'] == True:
 			selected_weekdays.append(6)
@@ -92,19 +95,22 @@ class AddLessonSlotForm(forms.Form):
 			selected_weekdays.append(4)
 		if self.cleaned_data['sat'] == True:
 			selected_weekdays.append(5)
+			
+		#get a list of days based on form input that should have lesson slots created using dateutil
+		days = rrule(WEEKLY, wkst=SU, byweekday=selected_weekdays, dtstart=start_day, until=end_day)
 
-		days = rrule.rrule(rrule.WEEKLY, wkst=rrule.SU, byweekday=selected_weekdays, dtstart=self.cleaned_data['start_date'], until=self.cleaned_data['end_date'])
-	
 		for d in days:
+			#Combine Day and Time into a single datetime object
+			start_date = datetime(d.year, d.month, d.day, self.cleaned_data['start_time'].hour, self.cleaned_data['start_time'].minute)
+			
 			#Check for existing LessonSlots, if they exist do nothing.
-			if not LessonSlot.objects.filter(season__exact = self.cleaned_data['season'].id,
-										 date__exact = d, 
-										 start_time__exact = self.cleaned_data['start_time']):
+			if not LessonSlot.objects.filter(season__exact = self.cleaned_data['season'].id, 
+										 start_date__exact = start_date):
+				
 				new_lessonSlot = LessonSlot()
 				new_lessonSlot.season_id = self.cleaned_data['season'].id
-				new_lessonSlot.date = d
-				new_lessonSlot.start_time = self.cleaned_data['start_time']
-				new_lessonSlot.end_time = new_lessonSlot.start_time + timedelta(minutes=30)
+				new_lessonSlot.start_date = start_date
+				new_lessonSlot.end_date = start_date + timedelta(minutes=30)
 				new_lessonSlot.weekday = d.weekday()
 				new_lessonSlot.status = 'Open'
 				new_lessonSlot.save()
@@ -114,33 +120,38 @@ class AddLessonSlotForm(forms.Form):
 #AddLessonWizard Step 0
 class AddLessonForm1(forms.Form):
 	season = forms.ModelChoiceField(Season.objects.all())
-	start_date = forms.DateField()
-	end_date = forms.DateField()
+	start_day = forms.DateField()
+	end_day = forms.DateField()
 	start_time = forms.TimeField(input_formats = settings.TIME_INPUT_FORMATS)
 	
 	#Override form clean method to check if there are any available lessons before continuing.
 	def clean(self):
+		start_day = self.cleaned_data['start_day']
+		end_day = self.cleaned_data['end_day']
+		start_time = self.cleaned_data['start_time']
+		
+		start_date = datetime(start_day.year, start_day.month, start_day.day, start_time.hour, start_time.minute)
+		end_date = datetime(end_day.year, end_day.month, end_day.day, start_time.hour, start_time.minute)
+	#check if this is filtering properly, possibly needs weekday filter							
 		available_slots = LessonSlot.objects.filter(season__exact = self.cleaned_data['season'], status__exact = 'Open',
-							    date__gte = self.cleaned_data['start_date'], 
-							    date__lte = self.cleaned_data['end_date'], 
-							    start_time__exact = self.cleaned_data['start_time'],  
-							    weekday__exact = self.cleaned_data['start_date'].weekday())
+							    start_date__gte = start_date,
+							    start_date__lte = end_date)
 		if available_slots:
 			return self.cleaned_data
 		else: 
 			raise forms.ValidationError('There are no available lessons within the requested criteria.')
 
-			#AddLessonWizard Step 1
+#AddLessonWizard Step 1
 class AddLessonForm2(forms.Form):
 	#Dynamically create a boolean field for each Lesson Slot matching the criteria from Step 0
 	def __init__(self, *args, **kwargs):
 
-		start_date = kwargs['start_date']
-		end_date = kwargs['end_date']
+		start_date = kwargs['start_day']
+		end_date = kwargs['end_day']
 		start_time = kwargs['start_time']
-		weekday = kwargs['start_date'].weekday()
-		del kwargs['start_date']
-		del kwargs['end_date']
+		weekday = kwargs['start_day'].weekday()
+		del kwargs['start_day']
+		del kwargs['end_day']
 		del kwargs['start_time']
 
 		super(AddLessonForm2, self).__init__(*args, **kwargs)

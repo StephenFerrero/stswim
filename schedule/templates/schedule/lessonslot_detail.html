@@ -7,15 +7,15 @@
 <table class="detail">
 	<tr>
 		<th>Date:</th>
-		<td>{{ lessonslot.date|date:"D M j Y" }}</td>
+		<td>{{ lessonslot.start_date|date:"D M j Y" }}</td>
 	</tr>
 	<tr>
 		<th>Start Time:</th> 
-		<td>{{ lessonslot.start_time|time:"g:i a" }}</td>
+		<td>{{ lessonslot.start_date|time:"g:i a" }}</td>
 	</tr>
 	<tr>
 		<th>End Time:</th> 
-		<td>{{ lessonslot.end_time|time:"g:i a" }}</td>
+		<td>{{ lessonslot.end_date|time:"g:i a" }}</td>
 	</tr>
 	<tr>
 		<th>Status:</th> 
