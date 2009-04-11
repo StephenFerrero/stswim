@@ -72,13 +72,13 @@ class AddLessonSlotForm(forms.Form):
 	thu = forms.BooleanField(required=False)
 	fri = forms.BooleanField(required=False)
 	sat = forms.BooleanField(required=False)
-	start_day = forms.DateField()
-	end_day = forms.DateField()
-	start_time = forms.DateTimeField(input_formats = settings.TIME_INPUT_FORMATS, help_text='All lessonslots are 30 min.')
+	start_date = forms.DateField()
+	end_date = forms.DateField()
+	start_time = forms.TimeField(input_formats = settings.TIME_INPUT_FORMATS, help_text='All lessonslots are 30 min.')
 
 	def save(self):
-		start_day = self.cleaned_data['start_day']
-		end_day = self.cleaned_data['end_day']
+		start_date = self.cleaned_data['start_date']
+		end_date = self.cleaned_data['end_date']
 		
 		selected_weekdays = []
 		if self.cleaned_data['sun'] == True:
@@ -97,20 +97,22 @@ class AddLessonSlotForm(forms.Form):
 			selected_weekdays.append(5)
 			
 		#get a list of days based on form input that should have lesson slots created using dateutil
-		days = rrule(WEEKLY, wkst=SU, byweekday=selected_weekdays, dtstart=start_day, until=end_day)
+		days = rrule(WEEKLY, wkst=SU, byweekday=selected_weekdays, dtstart=start_date, until=end_date)
 
 		for d in days:
 			#Combine Day and Time into a single datetime object
-			start_date = datetime(d.year, d.month, d.day, self.cleaned_data['start_time'].hour, self.cleaned_data['start_time'].minute)
+			start_datetime = datetime(d.year, d.month, d.day, self.cleaned_data['start_time'].hour, self.cleaned_data['start_time'].minute)
 			
 			#Check for existing LessonSlots, if they exist do nothing.
 			if not LessonSlot.objects.filter(season__exact = self.cleaned_data['season'].id, 
-										 start_date__exact = start_date):
+										 start_datetime__exact = start_datetime):
 				
 				new_lessonSlot = LessonSlot()
 				new_lessonSlot.season_id = self.cleaned_data['season'].id
-				new_lessonSlot.start_date = start_date
-				new_lessonSlot.end_date = start_date + timedelta(minutes=30)
+				new_lessonSlot.start_datetime = start_datetime
+				new_lessonSlot.start_time = start_datetime.time()
+				new_lessonSlot.end_datetime = start_datetime + timedelta(minutes=30)
+				new_lessonSlot.end_time = new_lessonSlot.end_datetime.time()
 				new_lessonSlot.weekday = d.weekday()
 				new_lessonSlot.status = 'Open'
 				new_lessonSlot.save()
@@ -120,22 +122,23 @@ class AddLessonSlotForm(forms.Form):
 #AddLessonWizard Step 0
 class AddLessonForm1(forms.Form):
 	season = forms.ModelChoiceField(Season.objects.all())
-	start_day = forms.DateField()
-	end_day = forms.DateField()
+	start_date = forms.DateField()
+	end_date = forms.DateField()
 	start_time = forms.TimeField(input_formats = settings.TIME_INPUT_FORMATS)
 	
 	#Override form clean method to check if there are any available lessons before continuing.
 	def clean(self):
-		start_day = self.cleaned_data['start_day']
-		end_day = self.cleaned_data['end_day']
+		start_date = self.cleaned_data['start_date']
+		end_date = self.cleaned_data['end_date']
 		start_time = self.cleaned_data['start_time']
 		
-		start_date = datetime(start_day.year, start_day.month, start_day.day, start_time.hour, start_time.minute)
-		end_date = datetime(end_day.year, end_day.month, end_day.day, start_time.hour, start_time.minute)
-	#check if this is filtering properly, possibly needs weekday filter							
+		start_datetime = datetime(start_date.year, start_date.month, start_date.day, start_time.hour, start_time.minute)
+		end_datetime = datetime(end_date.year, end_date.month, end_date.day, start_time.hour, start_time.minute)
+		#check if this is filtering properly, possibly needs weekday filter							
 		available_slots = LessonSlot.objects.filter(season__exact = self.cleaned_data['season'], status__exact = 'Open',
-							    start_date__gte = start_date,
-							    start_date__lte = end_date)
+							    start_datetime__gte = start_datetime,
+							    start_datetime__lte = end_datetime,
+								start_time__exact = start_time)
 		if available_slots:
 			return self.cleaned_data
 		else: 
@@ -145,20 +148,25 @@ class AddLessonForm1(forms.Form):
 class AddLessonForm2(forms.Form):
 	#Dynamically create a boolean field for each Lesson Slot matching the criteria from Step 0
 	def __init__(self, *args, **kwargs):
-
-		start_date = kwargs['start_day']
-		end_date = kwargs['end_day']
+		season = kwargs['season']
+		start_date = kwargs['start_date']
+		end_date = kwargs['end_date']
 		start_time = kwargs['start_time']
-		weekday = kwargs['start_day'].weekday()
-		del kwargs['start_day']
-		del kwargs['end_day']
+		weekday = kwargs['start_date'].weekday()
+		del kwargs['season']
+		del kwargs['start_date']
+		del kwargs['end_date']
 		del kwargs['start_time']
 
 		super(AddLessonForm2, self).__init__(*args, **kwargs)
 
-		self.fields['lessonslots'] = forms.ModelMultipleChoiceField(LessonSlot.objects.filter(status__exact='Open', date__gte=start_date, date__lte=end_date, start_time__exact=start_time, weekday__exact=weekday), 
-									    widget = forms.CheckboxSelectMultiple,
-									    label="Available Lessonslots:")
+		self.fields['lessonslots'] = forms.ModelMultipleChoiceField(LessonSlot.objects.filter(season__exact = season, 
+																								status__exact = 'Open',
+																				    			start_datetime__gte = start_date,
+																				    			start_datetime__lte = end_date,
+																								start_time__exact = start_time), 
+									    														widget = forms.CheckboxSelectMultiple,
+									    														label="Available Lessonslots:")
 
 #AddLessonWizard Step 2
 class AddLessonForm3(forms.Form):
@@ -174,7 +182,8 @@ class AddLessonWizard(FormWizard):
 			return self.form_list[step](data, prefix=self.prefix_for_step(step), initial=self.initial.get(step, None), 
 						    start_date=self.start_date,
 						    end_date=self.end_date,
-						    start_time=self.start_time,)
+						    start_time=self.start_time,
+							season=self.season)
 
 		return self.form_list[step](data, prefix=self.prefix_for_step(step), initial=self.initial.get(step, None))
 
@@ -185,8 +194,9 @@ class AddLessonWizard(FormWizard):
 			self.start_date = form.cleaned_data['start_date']
 			self.end_date = form.cleaned_data['end_date']
 			self.start_time = form.cleaned_data['start_time']
+			self.season = form.cleaned_data['season']
 
-			unavailable_slots = LessonSlot.objects.filter(date__gte=self.start_date, date__lte=self.end_date, start_time__exact=self.start_time, weekday__exact=self.start_date.weekday()).exclude(status__exact="Open")
+			unavailable_slots = LessonSlot.objects.filter(start_datetime__gte=self.start_date, start_datetime__lte=self.end_date, start_time__exact=self.start_time, weekday__exact=self.start_date.weekday()).exclude(status__exact="Open")
 			#Save a list of unavailable slots into context for the template so we can notify the user of them.
 			self.extra_context = {'unavailable_slots' : unavailable_slots}
 

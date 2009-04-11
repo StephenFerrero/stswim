@@ -1,21 +1,21 @@
 {% extends 'schedule/base_manage.html' %}
 
-{% block title %}Viewing {{ lessonslot.date|date:"n/j/y" }} {{ lessonslot.start_time|time:"g:i a" }}{% endblock %}
+{% block title %}Viewing {{ lessonslot.datetime|date:"n/j/y" }} {{ lessonslot.start_date|time:"g:i a" }}{% endblock %}
 
 {% block manage_content %}
 <h2> Lessonslot Detail:</h2>
 <table class="detail">
 	<tr>
 		<th>Date:</th>
-		<td>{{ lessonslot.start_date|date:"D M j Y" }}</td>
+		<td>{{ lessonslot.start_datetime|date:"D M j Y" }}</td>
 	</tr>
 	<tr>
 		<th>Start Time:</th> 
-		<td>{{ lessonslot.start_date|time:"g:i a" }}</td>
+		<td>{{ lessonslot.start_datetime|time:"g:i a" }}</td>
 	</tr>
 	<tr>
 		<th>End Time:</th> 
-		<td>{{ lessonslot.end_date|time:"g:i a" }}</td>
+		<td>{{ lessonslot.end_datetime|time:"g:i a" }}</td>
 	</tr>
 	<tr>
 		<th>Status:</th> 

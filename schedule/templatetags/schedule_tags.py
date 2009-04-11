@@ -58,7 +58,7 @@ def season_month_cal(context):
 		cal_day['lessons'] = False
 		cal_day_lessons = []
 		for lesson in lesson_slot_list:
-			if day == lesson.start_date.date():
+			if day == lesson.start_datetime.date():
 				cal_day_lessons.append(lesson)
 		cal_day['lessons'] = cal_day_lessons
 		week.append(cal_day)
