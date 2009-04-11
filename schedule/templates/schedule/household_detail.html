@@ -53,8 +53,8 @@
 			<tr><th>Day</th><th>Date</th><th>Start Time</th><th>Type</th><th>Status</th><th>Students</th></tr>
 		{% for lesson in household_lessons %}
 			<tr class="{% cycle even,odd %}">
-				<td>{{ lesson.lessonslot_set.all.0.date|date:"D" }}</td>
-				<td><a href="{% url view_lessonslot lessonslot_id=lesson.lessonslot_set.all.0.id %}">{{ lesson.lessonslot_set.all.0.date|date:"m/d/y" }}</a></td>
+				<td>{{ lesson.lessonslot_set.all.0.start_datetime|date:"D" }}</td>
+				<td><a href="{% url view_lessonslot lessonslot_id=lesson.lessonslot_set.all.0.id %}">{{ lesson.lessonslot_set.all.0.start_datetime|date:"m/d/y" }}</a></td>
 				<td>{{ lesson.lessonslot_set.all.0.start_time|time:"g:i a" }}</td>
 				<td>{{ lesson.lesson_type }}</td>
 				<td>{{ lesson.status }}</td>

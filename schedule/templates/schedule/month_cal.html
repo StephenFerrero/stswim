@@ -27,7 +27,7 @@
 		<tr>
 		{% for day in week %}
 		<td class="{{ day.day|date:"D"|slice:":3" }} {% ifequal day.day today %}today{% endifequal %}">
-		<!-- lesson is actually lessonslot here -->
+		<!-- lesson actually means lessonslot here -->
 			{% for lesson in day.lessons %}
 				{% if perms.schedule.can_viewfullschedule %}
 				<!--TODO: Change these urls to be dynamic using  url -->
@@ -35,7 +35,7 @@
 				<span class="{% ifequal lesson.status "Closed" %}calendar_lesson_closed{% endifequal %}
 					{% ifequal lesson.status "Booked" %}calendar_lesson_booked{% endifequal %}
 					{% ifequal lesson.status "Open" %}calendar_lesson_open{% endifequal %}">
-				{{ lesson.start_date|time:"g:i a" }} - 
+				{{ lesson.start_datetime|time:"g:i a" }} - 
 					{% if not lesson.lesson.status %}{{ lesson.status }}
 					{% else %}{{ lesson.lesson.status }}
 					{% endif %}
@@ -45,7 +45,7 @@
 				<span class="{% ifequal lesson.status "Closed" %}calendar_lesson_closed{% endifequal %}
 					{% ifequal lesson.status "Booked" %}calendar_lesson_booked{% endifequal %}
 					{% ifequal lesson.status "Open" %}calendar_lesson_open{% endifequal %}">
-				{{ lesson.start_date|time:"g:i a" }} -
+				{{ lesson.start_datetime|time:"g:i a" }} -
 					{% if not lesson.lesson.status %}{{ lesson.status }}
 					{% else %}{{ lesson.lesson.status }}
 					{% endif %}

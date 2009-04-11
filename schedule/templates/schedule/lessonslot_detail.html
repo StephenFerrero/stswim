@@ -10,12 +10,8 @@
 		<td>{{ lessonslot.start_datetime|date:"D M j Y" }}</td>
 	</tr>
 	<tr>
-		<th>Start Time:</th> 
-		<td>{{ lessonslot.start_datetime|time:"g:i a" }}</td>
-	</tr>
-	<tr>
-		<th>End Time:</th> 
-		<td>{{ lessonslot.end_datetime|time:"g:i a" }}</td>
+		<th>Time:</th> 
+		<td>{{ lessonslot.start_datetime|time:"g:i a" }} - {{ lessonslot.end_datetime|time:"g:i a" }}</td>
 	</tr>
 	<tr>
 		<th>Status:</th> 
@@ -30,11 +26,11 @@
 		<div id="lessonslotdetail_students">
 		<table class="detail">
 			<tr>
-				<th>Lesson Status</th>
+				<th>Status</th>
 				<td>{{ lessonslot.lesson.status }}</td>
 			</tr>
 			<tr>
-				<th>Lesson Type:</th>
+				<th>Type:</th>
 				<td>{{ lessonslot.lesson.lesson_type }}</td>
 			</tr>
 			<tr>
@@ -74,5 +70,5 @@
 		<a href="/schedule/lessonslot/{{lessonslot.id}}/open">Open Slot</a>
 	{% endifequal %}
 	<br /><br />
-	<a href="/schedule/season/{{ lessonslot.season.id }}/view/month/{{ lessonslot.date|date:"m" }}/">Back to Calendar</a>
+	<a href="/schedule/season/{{ lessonslot.season.id }}/view/month/{{ lessonslot.start_datetime|date:"m" }}/">Back to Calendar</a>
 {% endblock %}

@@ -18,15 +18,12 @@ class StudentAddForm(forms.Form):
 
 	def __init__(self, household_id, *args, **kwargs):
 		super(StudentAddForm, self).__init__(*args, **kwargs)
-		
-		self.household_id = household_id
 
 	first_name = forms.CharField(max_length=40)
 	last_name = forms.CharField(max_length=40)
 	birth_date = forms.DateField()
 	sex = forms.ChoiceField(choices=SEX_CHOICES)
 	has_liabilityform = forms.BooleanField(label="Has Liability Form", required=False)
-		
 
 	def save(self):
 		new_student = Student()
@@ -122,7 +119,7 @@ class AddLessonSlotForm(forms.Form):
 #AddLessonWizard Step 0
 class AddLessonForm1(forms.Form):
 	season = forms.ModelChoiceField(Season.objects.all())
-	start_date = forms.DateField()
+	start_date = forms.DateField(help_text = 'Start date will determine day of week for lessons.')
 	end_date = forms.DateField()
 	start_time = forms.TimeField(input_formats = settings.TIME_INPUT_FORMATS)
 	
@@ -134,10 +131,12 @@ class AddLessonForm1(forms.Form):
 		
 		start_datetime = datetime(start_date.year, start_date.month, start_date.day, start_time.hour, start_time.minute)
 		end_datetime = datetime(end_date.year, end_date.month, end_date.day, start_time.hour, start_time.minute)
-		#check if this is filtering properly, possibly needs weekday filter							
+		
+		#Check for available lessonslots				
 		available_slots = LessonSlot.objects.filter(season__exact = self.cleaned_data['season'], status__exact = 'Open',
 							    start_datetime__gte = start_datetime,
 							    start_datetime__lte = end_datetime,
+								weekday__exact = start_datetime.weekday(),
 								start_time__exact = start_time)
 		if available_slots:
 			return self.cleaned_data
@@ -196,7 +195,7 @@ class AddLessonWizard(FormWizard):
 			self.start_time = form.cleaned_data['start_time']
 			self.season = form.cleaned_data['season']
 
-			unavailable_slots = LessonSlot.objects.filter(start_datetime__gte=self.start_date, start_datetime__lte=self.end_date, start_time__exact=self.start_time, weekday__exact=self.start_date.weekday()).exclude(status__exact="Open")
+			unavailable_slots = LessonSlot.objects.filter(start_datetime__gte=self.start_date, start_datetime__lte=self.end_date, start_time__exact=self.start_time, weekday__exact=self.start_datetime.weekday()).exclude(status__exact="Open")
 			#Save a list of unavailable slots into context for the template so we can notify the user of them.
 			self.extra_context = {'unavailable_slots' : unavailable_slots}
 
