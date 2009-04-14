@@ -12,10 +12,10 @@ def viewseason(request, season_id=None, display_month=None):
 	if not season_id:
 		today = date.today()
 		try:
-			# TODO: This get statement does not work between seasons.
+			#TODO This get statement does not work between seasons.
 			season = Season.objects.get(end_date__gte = today)
 		except:
-			#TODO: print error here
+			#TODO print error here
 			error = "No Season Exists!"
 			return render_to_response("error.html",
 										{'error' : error,})
@@ -38,7 +38,7 @@ def viewday(request, year, month, day):
 	
 	season = Season.objects.get(start_date__lte = display_date, end_date__gte = display_date)
 	
-	todayslessonslots = LessonSlot.objects.filter(start_date__exact = display_date)
+	todayslessonslots = LessonSlot.objects.filter(start_datetime__exact = display_date)
 	
 	return render_to_response("schedule/dayview.html", 
 								{'display_date' : display_date, 'todayslessonslots' : todayslessonslots, 'season' : season},

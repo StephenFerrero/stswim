@@ -6,12 +6,12 @@
 	{% if not object_list %}
 		There are no seasons<br />
 	{% else %}
-	<table>
+	<table class="data">
 	<th>Season Name</th>
 	<th>Start Date</th>
 	<th>End Date</th>
 	{% for season in object_list %}
-		<tr><td><a href="{% url view_season season_id=season.id %}">{{ season.name }}</a></td><td> {{ season.start_date }}</td><td>{{ season.end_date }}</td></tr>
+		<tr><td><a href="{% url view_season season_id=season.id %}">{{ season.name }}</a></td><td>{{ season.start_date|date:"m/j/y" }}</td><td>{{ season.end_date|date:"m/j/y" }}</td></tr>
 	{% endfor %}
 	{% endif %}
 	</table>

@@ -14,6 +14,10 @@
 		<td>{{ lessonslot.start_datetime|time:"g:i a" }} - {{ lessonslot.end_datetime|time:"g:i a" }}</td>
 	</tr>
 	<tr>
+		<th>Instructor:</th> 
+		<td>{% firstof lessonslot.instructor "TBD" %}</td>
+	</tr>
+	<tr>
 		<th>Status:</th> 
 		<td>{{lessonslot.status}}</td>
 	</tr>
@@ -42,10 +46,10 @@
 				{% endfor %}
 				</td>
 			</tr>
-			{% if lessonslot.lesson.intructor %}
+			{% if lessonslot.intructor %}
 			<tr>
 				<th>Instructor:</th>
-				<td>{{ lessonslot.lesson.intructor.first_name }} {{ lessonslot.lesson.intructor.last_name }}</td>
+				<td>{{ lessonslot.instructor.first_name }} {{ lessonslot.intructor.last_name }}</td>
 			</tr>
 			{% endif %}
 			</tr>

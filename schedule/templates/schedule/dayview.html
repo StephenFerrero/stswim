@@ -5,6 +5,7 @@
 
 {% block manage_content %}
 <h3>Lessons for {{display_date|date:"m/d/y"}}:</h3>
+	<br />
 	{% if todayslessonslots %}
 		<a href="{% url close_day season_id=season.id, year=display_date.year, month=display_date.month, day=display_date.day %}">Close Day</a>
 		<a href="{% url open_day season_id=season.id, year=display_date.year, month=display_date.month, day=display_date.day %}">Open Day</a>
@@ -22,8 +23,10 @@
 		 		</tr>
 		 	{% endfor %}
 		 </table>
+		<br />
 	{% else %}
 		<h3>No Lessons On This Day</h3>
 	{% endif %}
+	<br />
 	<a href="{% url view_season_bymonth season_id=season.id, display_month=display_date.month %}">Back to Calendar</a>
 {% endblock %}

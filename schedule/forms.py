@@ -4,7 +4,7 @@ from django.contrib.formtools.wizard import FormWizard
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.forms import ModelForm
-from stswim.schedule.models import SEX_CHOICES, LESSON_TYPES, LESSON_STATUS, Student, Season, LessonSlot, Lesson
+from stswim.schedule.models import SEX_CHOICES, LESSON_TYPES, LESSON_STATUS, Student, Season, LessonSlot, Lesson, Employee
 from dateutil.rrule import *
 from datetime import timedelta, datetime
 
@@ -18,6 +18,8 @@ class StudentAddForm(forms.Form):
 
 	def __init__(self, household_id, *args, **kwargs):
 		super(StudentAddForm, self).__init__(*args, **kwargs)
+
+		self.household_id = household_id
 
 	first_name = forms.CharField(max_length=40)
 	last_name = forms.CharField(max_length=40)
@@ -72,6 +74,7 @@ class AddLessonSlotForm(forms.Form):
 	start_date = forms.DateField()
 	end_date = forms.DateField()
 	start_time = forms.TimeField(input_formats = settings.TIME_INPUT_FORMATS, help_text='All lessonslots are 30 min.')
+	instructor = forms.ModelChoiceField(Employee.objects.filter(status__exact = 'Active'))
 
 	def save(self):
 		start_date = self.cleaned_data['start_date']
@@ -97,7 +100,7 @@ class AddLessonSlotForm(forms.Form):
 		days = rrule(WEEKLY, wkst=SU, byweekday=selected_weekdays, dtstart=start_date, until=end_date)
 
 		for d in days:
-			#Combine Day and Time into a single datetime object
+			#Need to convert start_date to start_datetime so that we can sucessfully compare against existing objects
 			start_datetime = datetime(d.year, d.month, d.day, self.cleaned_data['start_time'].hour, self.cleaned_data['start_time'].minute)
 			
 			#Check for existing LessonSlots, if they exist do nothing.
@@ -112,6 +115,7 @@ class AddLessonSlotForm(forms.Form):
 				new_lessonSlot.end_time = new_lessonSlot.end_datetime.time()
 				new_lessonSlot.weekday = d.weekday()
 				new_lessonSlot.status = 'Open'
+				new_lessonSlot.instructor = self.cleaned_data['instructor']
 				new_lessonSlot.save()
 
 		return self.cleaned_data['season'].id
@@ -129,15 +133,16 @@ class AddLessonForm1(forms.Form):
 		end_date = self.cleaned_data['end_date']
 		start_time = self.cleaned_data['start_time']
 		
+		#Need to convert start_date to start_datetime so that we can sucessfully compare against existing objects
 		start_datetime = datetime(start_date.year, start_date.month, start_date.day, start_time.hour, start_time.minute)
 		end_datetime = datetime(end_date.year, end_date.month, end_date.day, start_time.hour, start_time.minute)
 		
 		#Check for available lessonslots				
 		available_slots = LessonSlot.objects.filter(season__exact = self.cleaned_data['season'], status__exact = 'Open',
 							    start_datetime__gte = start_datetime,
-							    start_datetime__lte = end_datetime,
-								weekday__exact = start_datetime.weekday(),
+							 	start_datetime__lte = end_datetime,
 								start_time__exact = start_time)
+								
 		if available_slots:
 			return self.cleaned_data
 		else: 
@@ -156,16 +161,18 @@ class AddLessonForm2(forms.Form):
 		del kwargs['start_date']
 		del kwargs['end_date']
 		del kwargs['start_time']
+		
+		#Need to convert start_date to start_datetime so that we can sucessfully compare against existing objects
+		start_datetime = datetime(start_date.year, start_date.month, start_date.day, start_time.hour, start_time.minute)
+		end_datetime = datetime(end_date.year, end_date.month, end_date.day, start_time.hour, start_time.minute)
 
 		super(AddLessonForm2, self).__init__(*args, **kwargs)
-
-		self.fields['lessonslots'] = forms.ModelMultipleChoiceField(LessonSlot.objects.filter(season__exact = season, 
-																								status__exact = 'Open',
-																				    			start_datetime__gte = start_date,
-																				    			start_datetime__lte = end_date,
-																								start_time__exact = start_time), 
-									    														widget = forms.CheckboxSelectMultiple,
-									    														label="Available Lessonslots:")
+		available_slots = LessonSlot.objects.filter(season__exact = season, status__exact = 'Open',
+							    start_datetime__gte = start_datetime,
+							 	start_datetime__lte = end_datetime,
+								start_time__exact = start_time)
+		print available_slots
+		self.fields['lessonslots'] = forms.ModelMultipleChoiceField(available_slots, widget = forms.CheckboxSelectMultiple, label="Available Lessonslots:")
 
 #AddLessonWizard Step 2
 class AddLessonForm3(forms.Form):
@@ -195,7 +202,11 @@ class AddLessonWizard(FormWizard):
 			self.start_time = form.cleaned_data['start_time']
 			self.season = form.cleaned_data['season']
 
-			unavailable_slots = LessonSlot.objects.filter(start_datetime__gte=self.start_date, start_datetime__lte=self.end_date, start_time__exact=self.start_time, weekday__exact=self.start_datetime.weekday()).exclude(status__exact="Open")
+			#Need to convert start_date to start_datetime so that we can sucessfully compare against existing objects
+			self.start_datetime = datetime(self.start_date.year, self.start_date.month, self.start_date.day, self.start_time.hour, self.start_time.minute)
+			self.end_datetime = datetime(self.end_date.year, self.end_date.month, self.end_date.day, self.start_time.hour, self.start_time.minute)
+			
+			unavailable_slots = LessonSlot.objects.filter(start_datetime__gte=self.start_datetime, start_datetime__lte=self.end_datetime, start_time__exact=self.start_time).exclude(status__exact="Open")
 			#Save a list of unavailable slots into context for the template so we can notify the user of them.
 			self.extra_context = {'unavailable_slots' : unavailable_slots}
 

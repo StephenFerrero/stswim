@@ -80,6 +80,7 @@ def addstudent(request, household_id):
 			household_id = form.save()
 			return HttpResponseRedirect(reverse('view_household', args=[household_id]))
 	else:
+		#Send household_id to form, 
 		form = StudentAddForm(household_id)
 	return render_to_response("schedule/manageform.html", {'form' : form, 'form_title' : 'Add Student'}, 
 				  context_instance=RequestContext(request))

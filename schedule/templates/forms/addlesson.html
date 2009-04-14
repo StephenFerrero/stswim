@@ -11,7 +11,7 @@
 	<p>The following lesson slots were unavailable:</p>
 	<ul>
 	{% for slot in unavailable_slots %}
-		<li>{{ slot.date }} {{ slot.start_time|time:"g:i a" }} - {{ slot.status }}</li>
+		<li>{{ slot.start_datetime|date:"n/j/y" }} {{ slot.start_time|time:"g:i a" }} - {{ slot.status }}</li>
 	{% endfor %}
 	</ul>
 {% endif %}

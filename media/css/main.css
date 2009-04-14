@@ -350,11 +350,26 @@ table.detail td {
 
 .calendar_lesson_open {
 	font-weight: bold;
-	color: green;
+	text-transform:uppercase;
+
+}
+
+.instructor_victoria {
+	color: #FF6600;
+}
+
+.instructor_pamela {
+	color: #CC00FF;
+}
+
+.instructor_jackie {
+	color: blue;
 }
 
 .calendar_lesson_closed,
 .calendar_lesson_booked {
+	text-transform:uppercase;
+	font-size: 90%;
 	color: grey;
 }
 

@@ -29,6 +29,16 @@ LESSON_STATUS = (
     ('Cancelled', 'Cancelled'),
 )
 
+EMPLOYEE_STATUS = (
+	('Active', 'Active'),
+	('Inactive', 'Inactive'),
+)
+
+STATUS = (
+	('0', 'Inactive'),
+	('1', 'Active'),
+)
+
 class Household(models.Model):
     creation_date = models.DateField()
 
@@ -78,6 +88,7 @@ class Student(models.Model):
                 )
 
 class Employee(models.Model):
+    status =  models.CharField(choices=EMPLOYEE_STATUS, default='Active', max_length=30)
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=40)
     birth_date = models.DateField()
@@ -89,9 +100,10 @@ class Employee(models.Model):
     zip_code = models.CharField(max_length=5)
     
     def __unicode__(self):
-        return '%s %s' % (self.first_name, self.last_name)
+        return '%s' % (self.first_name)
 
 class Season(models.Model):
+    status = models.CharField(choices=STATUS, max_length=30)
     name = models.CharField(max_length=30)
     start_date = models.DateField()
     end_date = models.DateField()
@@ -111,7 +123,7 @@ class Lesson(models.Model):
     status = models.CharField(choices=LESSON_STATUS, max_length=30)
     
     def __unicode__(self):
-        return '%s %s' % (LessonSlot.objects.get(lesson__exact = self).date, LessonSlot.objects.get(lesson__exact = self).start_time)
+        return '%s %s' % (LessonSlot.objects.get(lesson__exact = self).start_datetime, LessonSlot.objects.get(lesson__exact = self).start_time)
     
     class Meta:
         permissions = (
@@ -150,7 +162,7 @@ class LessonSlot(models.Model):
         ordering = ['start_datetime']
     
     def __unicode__(self):
-        return '%s %s' % (self.start_datetime.date(), self.start_datetime.time())
+        return '%s/%s/%s %s' % (self.start_datetime.month, self.start_datetime.day, self.start_datetime.year, self.start_datetime.time())
         
     def close(self):
         self.status = 'Closed'

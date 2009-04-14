@@ -32,20 +32,26 @@
 				{% if perms.schedule.can_viewfullschedule %}
 				<!--TODO: Change these urls to be dynamic using  url -->
 				<a href="/schedule/lessonslot/{{lesson.id}}/view/">
-				<span class="{% ifequal lesson.status "Closed" %}calendar_lesson_closed{% endifequal %}
-					{% ifequal lesson.status "Booked" %}calendar_lesson_booked{% endifequal %}
-					{% ifequal lesson.status "Open" %}calendar_lesson_open{% endifequal %}">
-				{{ lesson.start_datetime|time:"g:i a" }} - 
-					{% if not lesson.lesson.status %}{{ lesson.status }}
-					{% else %}{{ lesson.lesson.status }}
-					{% endif %}
-				</span>
+					<span class="{% ifequal lesson.instructor.first_name "Victoria" %}instructor_victoria{% endifequal %}
+						{% ifequal lesson.instructor.first_name "Pamela" %}instructor_pamela{% endifequal %}
+						{% ifequal lesson.instructor.first_name "Jackie" %}instructor_jackie{% endifequal %}">
+						{{ lesson.start_datetime|time:"g:i A" }} -</span>
+					<span class="{% ifequal lesson.status "Closed" %}calendar_lesson_closed{% endifequal %}
+						{% ifequal lesson.status "Booked" %}calendar_lesson_booked{% endifequal %}
+						{% ifequal lesson.status "Open" %}calendar_lesson_open{% endifequal %}">
+						{% if not lesson.lesson.status %}{{ lesson.status }}
+						{% else %}{{ lesson.lesson.status }}
+						{% endif %}
+					</span>
 				</a>
 				{% else %}
+				<span class="{% ifequal lesson.instructor.first_name "Victoria" %}instructor_victoria{% endifequal %}
+					{% ifequal lesson.instructor.first_name "Pamela" %}instructor_pamela{% endifequal %}
+					{% ifequal lesson.instructor.first_name "Jackie" %}instructor_jackie{% endifequal %}">
+					{{ lesson.start_datetime|time:"g:i A" }} -</span>
 				<span class="{% ifequal lesson.status "Closed" %}calendar_lesson_closed{% endifequal %}
 					{% ifequal lesson.status "Booked" %}calendar_lesson_booked{% endifequal %}
 					{% ifequal lesson.status "Open" %}calendar_lesson_open{% endifequal %}">
-				{{ lesson.start_datetime|time:"g:i a" }} -
 					{% if not lesson.lesson.status %}{{ lesson.status }}
 					{% else %}{{ lesson.lesson.status }}
 					{% endif %}
