@@ -1,33 +1,32 @@
-/*=:project
-    scalable Inman Flash Replacement (sIFR) version 3.
+/*****************************************************************************
+scalable Inman Flash Replacement (sIFR) version 3.
 
-  =:file
-    Copyright: 2006 Mark Wubben.
-    Author: Mark Wubben, <http://novemberborn.net/>
+Copyright 2006 – 2008 Mark Wubben, <http://novemberborn.net/>
 
-  =:history
-    * IFR: Shaun Inman
-    * sIFR 1: Mike Davidson, Shaun Inman and Tomas Jogin
-    * sIFR 2: Mike Davidson, Shaun Inman, Tomas Jogin and Mark Wubben
+Older versions:
+* IFR by Shaun Inman
+* sIFR 1.0 by Mike Davidson, Shaun Inman and Tomas Jogin
+* sIFR 2.0 by Mike Davidson, Shaun Inman, Tomas Jogin and Mark Wubben
 
-  =:license
-    This software is licensed and provided under the CC-GNU LGPL.
-    See <http://creativecommons.org/licenses/LGPL/2.1/>    
-*/
+See also <http://novemberborn.net/sifr3> and <http://wiki.novemberborn.net/sifr3>.
+
+This software is licensed and provided under the CC-GNU LGPL.
+See <http://creativecommons.org/licenses/LGPL/2.1/>
+*****************************************************************************/
 
 import SifrStyleSheet;
 import flash.external.*;
 
 class sIFR {
-  public static var DEFAULT_TEXT                 = 'Rendered with sIFR 3, revision 397<br><strong>Rendered with sIFR 3, revision 397</strong><br><em>Rendered with sIFR 3, revision 397</em>';
-  public static var VERSION_WARNING              = 'Please update the Flash movie to version ';
+  public static var DEFAULT_TEXT                 = 'Rendered with sIFR 3, revision 436<br><strong>Rendered with sIFR 3, revision 436</strong><br><em>Rendered with sIFR 3, revision 436</em><br><strong><em>Rendered with sIFR 3, revision 436</em></strong>';
+  public static var VERSION_WARNING              = 'Movie (436) is incompatible with sifr.js (%s). Use movie of %s.<br><strong>Movie (436) is incompatible with sifr.js (%s). Use movie of %s.</strong><br><em>Movie (436) is incompatible with sifr.js (%s). Use movie of %s.</em><br><strong><em>Movie (436) is incompatible with sifr.js (%s). Use movie of %s.</em></strong>';
   public static var CSS_ROOT_CLASS               = 'sIFR-root';
   public static var DEFAULT_WIDTH                = 300;
   public static var DEFAULT_HEIGHT               = 100;
   public static var DEFAULT_ANTI_ALIAS_TYPE      = 'advanced';
   public static var MARGIN_LEFT                  = -3;
   public static var PADDING_BOTTOM               = 5; // Extra padding to make sure the movie is high enough in most cases.
-  public static var LEADING_REMAINDER            = 2; // Flash uses the specified leading minus 2 as the applied leading.
+  public static var LEADING_REMAINDER            = 2; // Flash uses the specified leading minus 2 as the applied leading, so we increment by 2
 
   public static var MIN_FONT_SIZE                = 6;
   public static var MAX_FONT_SIZE                = 126;
@@ -37,8 +36,7 @@ class sIFR {
   // the min height at 10px then.
   public static var MIN_HEIGHT                   = 10;
   public static var ALIASING_MAX_FONT_SIZE       = 48;
-  public static var FSS_WIDTH                    = 50000;
-  public static var VERSION                      = '397';
+  public static var VERSION                      = '436';
   
   //= Holds CSS properties and other rendering properties for the Flash movie.
   //  *Don't overwrite!*
@@ -149,32 +147,40 @@ class sIFR {
   }
   
   //= Runs sIFR. Called automatically.
-  public static function run(forced) {
+  public static function run(delayed) {
+    // Flash version older than 9,0,115 under IE incorrectly approach the Flash movie, breaking ExternalInterface.
+    // sIFR has a workaround, but this workaround cannot be applied until the Flash movie has been added to the document,
+    // which usually causes the ActionScript to run and set up ExternalInterface. Delaying for a couple milliseconds
+    // gives the JavaScript time to set up the workaround.
+    if(_root.delayrun == 'true' && !delayed) {
+      var interval;
+      interval = setInterval(
+        function() {
+          clearInterval(interval);
+          sIFR.run(true);
+        }, 200);
+        
+      return;
+    }
+    
     // Have to set up the menu items first!
     menuItems.push(
       new ContextMenuItem("Follow link", function() { getURL(sIFR.instance.primaryLink, sIFR.instance.primaryLinkTarget) }),
       new ContextMenuItem("Open link in new window", function() { getURL(sIFR.instance.primaryLink, "_blank") })
     );
     
-    var holder  = _root.holder;
-    var content = DEFAULT_TEXT;
-    if(!forced) {
-      if(checkLocation() && checkDomain()) content = unescapeUnicode(_root.content);
-      if(content == 'undefined' || content == '') {
-        sIFR.call('resetMovie');
-
-        // If the content is the default text, wait two seconds for a possible resetmovie to proceed
-        var interval; // Odd syntax to deal with the MTASC compiler
-        interval = setInterval(function() {
-          clearInterval(interval);
-          sIFR.run(true);
-        }, 2000);
-        
-        return;
-      }
+    var holder       = _root.holder;
+    var content      = DEFAULT_TEXT;
+    var checkVersion = true;
+    if(checkLocation() && checkDomain()) content = unescapeUnicode(_root.content);
+    if(content == 'undefined' || content == '') {
+      var resetting = ExternalInterface.call('sIFR.__resetBrokenMovies');
+      if(resetting) return;
+      content      = DEFAULT_TEXT;
+      checkVersion = false;
     }
     
-    if(_root.version != VERSION && !forced) content = VERSION_WARNING + _root.version;
+    if(checkVersion && _root.version != VERSION) content = VERSION_WARNING.split('%s').join(_root.version);
     
     // Sets stage parameters
     Stage.scaleMode = 'noscale';
@@ -185,7 +191,7 @@ class sIFR {
     _root.menu = menu;
     
     // Other parameters
-    var opacity = parseInt(_root.opacity);
+    var opacity = parseInt(_root.opacity, 10);
     if(!isNaN(opacity)) holder._alpha = sIFR.defaultOpacity == -1 ? opacity : sIFR.defaultOpacity;
     else holder._alpha = 100;
     _root.blendMode = sIFR.defaultBlendMode == -1 ? _root.blendmode : sIFR.defaultBlendMode;
@@ -284,18 +290,18 @@ class sIFR {
     this.primaryLink       = unescapeUnicode(_root.link);
     this.primaryLinkTarget = unescapeUnicode(_root.target);
 
-    var offsetLeft         = parseInt(_root.offsetleft);
+    var offsetLeft         = parseInt(_root.offsetleft, 10);
     textField._x           = MARGIN_LEFT + (isNaN(offsetLeft) ? 0 : offsetLeft);
-    var offsetTop          = parseInt(_root.offsettop);
+    var offsetTop          = parseInt(_root.offsettop, 10);
     if(!isNaN(offsetTop)) textField._y += offsetTop;
     
-    tuneWidth = parseInt(_root.tunewidth);
+    tuneWidth = parseInt(_root.tunewidth, 10);
     if(isNaN(tuneWidth)) tuneWidth = 0;
-    tuneHeight = parseInt(_root.tuneheight);
+    tuneHeight = parseInt(_root.tuneheight, 10);
     if(isNaN(tuneHeight)) tuneHeight = 0;
     
-    this.renderHeight     = parseInt(_root.renderheight);
-    this.setTextFieldSize(parseInt(_root.width), parseInt(_root.height));
+    this.renderHeight     = parseInt(_root.renderheight, 10);
+    this.setTextFieldSize(parseInt(_root.width, 10), parseInt(this.renderHeight, 10));
     this.forceSingleLine  = _root.forcesingleline == 'true';
     textField.wordWrap    = _root.preventwrap != 'true';
     textField.selectable  = _root.selectable == 'true';
@@ -304,7 +310,7 @@ class sIFR {
     this.applyFilters();
     this.applyBackground();
 
-    this.fontSize = parseInt(_root.size);
+    this.fontSize = parseInt(_root.size, 10);
     if(isNaN(this.fontSize)) this.fontSize = 26;
 
     this.setStyles(unescapeUnicode(_root.css), false);
@@ -314,13 +320,13 @@ class sIFR {
       textField.antiAliasType = (_root.antialiastype != '' ? _root.antialiastype : sIFR.antiAliasType) || DEFAULT_ANTI_ALIAS_TYPE;      
     }
 
-    if(!sIFR.preserveAntiAlias || !isNaN(parseInt(_root.sharpness))) {
-      textField.sharpness = parseInt(_root.sharpness);
+    if(!sIFR.preserveAntiAlias || !isNaN(parseInt(_root.sharpness, 10))) {
+      textField.sharpness = parseInt(_root.sharpness, 10);
     }
     if(isNaN(textField.sharpness)) textField.sharpness = sIFR.defaultSharpness;
 
-    if(!sIFR.preserveAntiAlias || !isNaN(parseInt(_root.thickness))) {
-      textField.thickness = parseInt(_root.thickness);
+    if(!sIFR.preserveAntiAlias || !isNaN(parseInt(_root.thickness, 10))) {
+      textField.thickness = parseInt(_root.thickness, 10);
     }
     if(isNaN(textField.thickness)) textField.thickness = sIFR.defaultThickness;
     
@@ -338,11 +344,15 @@ class sIFR {
   }
   
   private function repaint() {
-    if(this.forceSingleLine) this.textField._width = FSS_WIDTH;
-
+    if(this.forceSingleLine) {
+      this.textField._width = 50000;
+      // 50 000 is a bit too much, filters won't work at that size etc. Therefore we size it down to the text width, and
+      // a bit of margin.
+      this.textField._width = this.textField.textWidth + 500;
+    }
+    
     var leadingFix = this.isSingleLine() ? sIFR.styles.latestLeading : 0;
-    if(leadingFix > 0) leadingFix -= LEADING_REMAINDER;
-
+    
     // Flash wants to scroll the movie by one line, by adding the fontSize to the
     // textField height this is no longer happens. We also add the absolute tuneHeight,
     // to prevent a negative value from triggering the bug. We won't send the fake

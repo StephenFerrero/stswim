@@ -45,6 +45,9 @@ class SifrStyleSheet extends TextField.StyleSheet {
   private function applyLeading(format, leading) {
     this.latestLeading = leading;
     
+    // Fix leading internally
+    leading = parseInt(leading, 10) + sIFR.LEADING_REMAINDER;
+    
     if(leading >= 0) {
         format.leading = leading;
         return format;
@@ -61,9 +64,13 @@ class SifrStyleSheet extends TextField.StyleSheet {
     var format = super.transform(style);
     if(style.leading) format = applyLeading(format, style.leading);
     if(style.letterSpacing) format.letterSpacing = style.letterSpacing;
-    // Support font sizes relative to the size of .sIFR-root.
-    if(this.fontSize && style.fontSize && style.fontSize.indexOf('%')) {
-      format.size = this.fontSize * parseInt(style.fontSize) / 100;
+    if(style.fontSize) {
+      // Support font sizes relative to the size of .sIFR-root.
+      if (this.fontSize && style.fontSize.indexOf('%') > 0) {
+        format.size = this.fontSize * parseInt(style.fontSize, 10) / 100;
+      } else {
+        format.size = parseInt(style.fontSize, 10);
+      }
     }
     format.kerning = _root.kerning == 'true' || !(_root.kerning == 'false') || sIFR.defaultKerning;
     return format;

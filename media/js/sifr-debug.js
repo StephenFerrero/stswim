@@ -1,5 +1,5 @@
 /*=:project
-    scalable Inman Flash Replacement (sIFR) version 3, revision 397
+    scalable Inman Flash Replacement (sIFR) version 3, revision 436.
 
     Provides debug information about sIFR.
 
@@ -77,6 +77,11 @@ sIFR.debug = new function() {
     delete kwargs.wmode;
     delete kwargs.transparent;
     delete kwargs.opaque;
+    
+    if (kwargs.css) {
+      kwargs.css = sIFR.util.convertCssArg(kwargs.css);
+      sIFR.util.extractFromCss(kwargs.css, '.sIFR-root', 'leading', true);
+    }
     
     var running = false;
     kwargs.onReplacement = function(cb) {

@@ -1,29 +1,24 @@
-/*=:project
-    scalable Inman Flash Replacement (sIFR) version 3, revision 397
+/*****************************************************************************
+scalable Inman Flash Replacement (sIFR) version 3, revision 436.
 
-  =:file
-    Copyright: 2006 – 2008  Mark Wubben.
-    Author: Mark Wubben, <http://novemberborn.net/>
+Copyright 2006 – 2008 Mark Wubben, <http://novemberborn.net/>
 
-  =:history
-    * IFR: Shaun Inman
-    * sIFR 1: Mike Davidson, Shaun Inman and Tomas Jogin
-    * sIFR 2: Mike Davidson, Shaun Inman, Tomas Jogin and Mark Wubben
+Older versions:
+* IFR by Shaun Inman
+* sIFR 1.0 by Mike Davidson, Shaun Inman and Tomas Jogin
+* sIFR 2.0 by Mike Davidson, Shaun Inman, Tomas Jogin and Mark Wubben
 
-  =:documentation
-    See <http://wiki.novemberborn.net/sifr3>
+See also <http://novemberborn.net/sifr3> and <http://wiki.novemberborn.net/sifr3>.
 
-  =:license
-    This software is licensed and provided under the CC-GNU LGPL.
-    See <http://creativecommons.org/licenses/LGPL/2.1/>    
-*/
+This software is licensed and provided under the CC-GNU LGPL.
+See <http://creativecommons.org/licenses/LGPL/2.1/>
+*****************************************************************************/
 
 var sIFR = new function() {
   var self = this;
 
   var ClassNames  = {
     ACTIVE    : 'sIFR-active',
-    UNLOADING : 'sIFR-unloading',
     REPLACED  : 'sIFR-replaced',
     IGNORE    : 'sIFR-ignore',
     ALTERNATE : 'sIFR-alternate',
@@ -39,7 +34,7 @@ var sIFR = new function() {
   this.MIN_FONT_SIZE        = 6;
   this.MAX_FONT_SIZE        = 126;
   this.FLASH_PADDING_BOTTOM = 5;
-  this.VERSION              = '397';
+  this.VERSION              = '436';
 
   this.isActive             = false;
   this.isEnabled            = true;
@@ -360,33 +355,32 @@ var sIFR = new function() {
     var product         = (navigator.product || '').toLowerCase();
     var platform        = navigator.platform.toLowerCase();
   
-    this.parseVersion = function(s) {
-      return s.replace(/(^|\D)(\d)(?=\D|$)/g, '$10000$2');
-    }
+    this.parseVersion = UserAgentDetection.parseVersion;
   
     this.macintosh        = /^mac/.test(platform);
     this.windows          = /^win/.test(platform);
+    this.linux            = /^linux/.test(platform);
     this.quicktime        = false;
-                          
+  
     this.opera            = /opera/.test(ua);
-    this.konqueror        = /konqueror/.test(product);
-    this.ie               = false;
-    this.ieSupported      = this.ie         && !/ppc|smartphone|iemobile|msie\s5\.5/.test(ua)
-    this.ieWin            = this.windows    && this.ie;
+    this.konqueror        = /konqueror/.test(ua);
+    this.ie               = false/*@cc_on || true @*/;
+    this.ieSupported      = this.ie         && !/ppc|smartphone|iemobile|msie\s5\.5/.test(ua)/*@cc_on && @_jscript_version >= 5.5 @*/
+    this.ieWin            = this.windows    && this.ie/*@cc_on && @_jscript_version >= 5.1 @*/;
     this.windows          = this.windows    && (!this.ie || this.ieWin);
-    this.ieMac            = this.macintosh  && this.ie;
+    this.ieMac            = this.macintosh  && this.ie/*@cc_on && @_jscript_version < 5.1 @*/;
     this.macintosh        = this.macintosh  && (!this.ie || this.ieMac);
     this.safari           = /safari/.test(ua);
     this.webkit           = !this.konqueror && /applewebkit/.test(ua);
     this.khtml            = this.webkit     || this.konqueror;
-    this.gecko            = !this.webkit    && product == 'gecko';
+    this.gecko            = !this.khtml     && product == 'gecko';
                           
     this.ieVersion        = this.ie         && /.*msie\s(\d\.\d)/.exec(ua)           ? this.parseVersion(RegExp.$1) : '0';
     this.operaVersion     = this.opera      && /.*opera(\s|\/)(\d+\.\d+)/.exec(ua)   ? this.parseVersion(RegExp.$2) : '0';
     this.webkitVersion    = this.webkit     && /.*applewebkit\/(\d+).*/.exec(ua)     ? this.parseVersion(RegExp.$1) : '0';
     this.geckoVersion     = this.gecko      && /.*rv:\s*([^\)]+)\)\s+gecko/.exec(ua) ? this.parseVersion(RegExp.$1) : '0';
     this.konquerorVersion = this.konqueror  && /.*konqueror\/([\d\.]+).*/.exec(ua)   ? this.parseVersion(RegExp.$1) : '0';
-    
+  
     this.flashVersion   = 0;
   
     if(this.ieWin) {
@@ -402,32 +396,50 @@ var sIFR = new function() {
         // examples of non-crashing code.
         try {
           axo                   = new ActiveXObject('ShockwaveFlash.ShockwaveFlash.6');
-          this.flashVersion     = 6;
+          this.flashVersion     = this.parseVersion('6');
           axo.AllowScriptAccess = 'always';
-        } catch(e) { stop = this.flashVersion == 6; }
-  
+        } catch(e) { stop = this.flashVersion == this.parseVersion('6'); }
+        
         if(!stop) try { axo = new ActiveXObject('ShockwaveFlash.ShockwaveFlash'); } catch(e) {}
       }
-  
-      if(!stop && axo) this.flashVersion = parseFloat(/([\d,?]+)/.exec(axo.GetVariable('$version'))[1].replace(/,/g, '.'));
-    } else if(navigator.plugins && navigator.plugins['Shockwave Flash']) {
-      this.flashVersion = parseFloat(/(\d+\.?\d*)/.exec(navigator.plugins['Shockwave Flash'].description)[1]);
-  
-      // Watch out for QuickTime, which could be stealing the Flash handling!
-      var i = 0;
-      while(this.flashVersion >= UserAgentDetection.MIN_FLASH_VERSION && i < navigator.mimeTypes.length) {
-        var mime = navigator.mimeTypes[i];
-        if(mime.type == 'application/x-shockwave-flash' && mime.enabledPlugin.description.toLowerCase().indexOf('quicktime') > -1) {
-          this.flashVersion = 0;
-          this.quicktime    = true;
-        }
-        i++;
+      
+      if(!stop && axo) {
+        this.flashVersion = this.parseVersion((axo.GetVariable('$version') || '').replace(/^\D+(\d+)\D+(\d+)\D+(\d+).*/g, '$1.$2.$3'));
       }
+    } else if(navigator.plugins && navigator.plugins['Shockwave Flash']) {
+      var d = navigator.plugins['Shockwave Flash'].description.replace(/^.*\s+(\S+\s+\S+$)/, '$1');
+      var v = d.replace(/^\D*(\d+\.\d+).*$/, '$1');
+      if(/r/.test(d)) v += d.replace(/^.*r(\d*).*$/, '.$1');
+      else if(/d/.test(d)) v += '.0';
+      this.flashVersion = this.parseVersion(v);
+      
+      // Watch out for QuickTime, which could be stealing the Flash handling! Also check to make sure the plugin for the Flash
+      // MIMEType is enabled.
+      var foundEnabled = false;
+      for(var i = 0, valid = this.flashVersion >= UserAgentDetection.MIN_FLASH_VERSION; valid && i < navigator.mimeTypes.length; i++) {
+        var mime = navigator.mimeTypes[i];
+        if(mime.type != 'application/x-shockwave-flash') continue;
+        if(mime.enabledPlugin) {
+          foundEnabled = true;
+          if(mime.enabledPlugin.description.toLowerCase().indexOf('quicktime') > -1) {
+            valid = false;
+            this.quicktime = true;
+          }
+        }
+      }
+      
+      if(this.quicktime || !foundEnabled) this.flashVersion = this.parseVersion('0');
     }
     this.flash = this.flashVersion >= UserAgentDetection.MIN_FLASH_VERSION;
-    this.transparencySupport  = this.macintosh || this.windows;
+    this.transparencySupport  = this.macintosh || this.windows
+                                               || this.linux && (
+                                                    this.flashVersion >= this.parseVersion('10')
+                                                    && (
+                                                      this.gecko && this.geckoVersion >= this.parseVersion('1.9')
+                                                      || this.opera
+                                                    )
+                                                  );
     this.computedStyleSupport = this.ie || !!document.defaultView.getComputedStyle;
-    this.requiresPrefetch     = this.ieWin  || this.khtml;
     this.fixFocus             = this.gecko  && this.windows;
     this.nativeDomLoaded      = this.gecko  || this.webkit    && this.webkitVersion  >= this.parseVersion('525')
                                             || this.konqueror && this.konquerorMajor >  this.parseVersion('03') || this.opera;
@@ -436,13 +448,23 @@ var sIFR = new function() {
     this.properDocument       = typeof(document.location) == 'object';
   
     this.supported            = this.flash  && this.properDocument && (!this.ie || this.ieSupported) && this.computedStyleSupport
-                                            && (!this.opera  || this.operaVersion  >= this.parseVersion('9.50')) 
+                                            && (!this.opera  || this.operaVersion  >= this.parseVersion('9.61')) 
                                             && (!this.webkit || this.webkitVersion >= this.parseVersion('412'))
                                             && (!this.gecko  || this.geckoVersion  >= this.parseVersion('1.8.0.12'))
-                                            && (!this.konqueror/* || this.konquerorVersion > this.parseVersion('3.5.7')*/);
+                                            && (!this.konqueror/* || this.konquerorVersion >= this.parseVersion('4.1')*/);
   };
   
-  UserAgentDetection.MIN_FLASH_VERSION = 8;
+  UserAgentDetection.parseVersion = function(s) {
+    return s.replace(
+      /(^|\D)(\d+)(?=\D|$)/g,
+      function(s, nonDigit, digits) {
+        s = nonDigit;
+        for(var i = 4 - digits.length; i >= 0; i--) s += '0';
+        return s + digits;
+      }
+    );
+  };
+  UserAgentDetection.MIN_FLASH_VERSION = UserAgentDetection.parseVersion('8');
   
   function FragmentIdentifier(sIFR) {
     this.fix = sIFR.ua.ieWin && window.location.hash != '';
@@ -500,7 +522,7 @@ var sIFR = new function() {
     
     function fire(evt, preserveReplacements) {
       sIFR.initialize(preserveReplacements);
-  
+      
       // Remove handlers to prevent memory leak in Firefox 1.5, but only after onload.
       if(evt && evt.type == 'load') {
         if(document.removeEventListener) document.removeEventListener('DOMContentLoaded', fire, false);
@@ -508,10 +530,28 @@ var sIFR = new function() {
       }
     };
     
+    // Unload detection based on the research from Moxiecode. <http://blog.moxiecode.com/2008/04/08/unload-event-never-fires-in-ie/>
+    function verifyUnload() {
+      sIFR.prepareClearReferences();
+      if(document.readyState == 'interactive') {
+        document.attachEvent('onstop', unloadByStop);
+        setTimeout(function() { document.detachEvent('onstop', unloadByStop) }, 0);
+      }
+    };
+    
+    function unloadByStop() {
+      document.detachEvent('onstop', unloadByStop);
+      fireUnload();
+    };
+    
+    function fireUnload() {
+      sIFR.clearReferences();
+    };
+    
     this.attach = function() {
       if(window.addEventListener) window.addEventListener('load', fire, false);
       else window.attachEvent('onload', fire);
-  
+      
       if(!sIFR.useDomLoaded || sIFR.ua.forcePageLoad || sIFR.ua.ie && window.top != window) return;
       
       if(sIFR.ua.nativeDomLoaded) {
@@ -520,6 +560,12 @@ var sIFR = new function() {
         pollLoad();
       } 
     };
+    
+    this.attachUnload = function() {
+      if(!sIFR.ua.ie) return;
+      window.attachEvent('onbeforeunload', verifyUnload);
+      window.attachEvent('onunload', fireUnload);
+    }
   };
   
   var PREFETCH_COOKIE = 'sifrFetch';
@@ -533,7 +579,7 @@ var sIFR = new function() {
       try { // We don't know which DOM actions the user agent will allow
         hasPrefetched = true;
         prefetch(movies);
-      } catch(e) { if(sIFR.debug) throw e; }
+      } catch(e) {}
   
       if(sIFR.setPrefetchCookie) document.cookie = PREFETCH_COOKIE + '=true;path=' + sIFR.cookiePath;
     };
@@ -557,13 +603,95 @@ var sIFR = new function() {
     }
   };
   
+  function BrokenFlashIE(sIFR) {
+    var active      = sIFR.ua.ie;
+    var fixFlash    = active && sIFR.ua.flashVersion < sIFR.ua.parseVersion('9.0.115');
+    var resetMovies = {};
+    var registry    = {};
+    
+    this.fixFlash = fixFlash;
+    
+    this.register = function(flashNode) {
+      if(!active) return;
+      
+      var id = flashNode.getAttribute('id');
+      // Try cleaning up previous Flash <object>
+      this.cleanup(id, false);
+      
+      registry[id] = flashNode;
+      delete resetMovies[id];
+      
+      if(fixFlash) window[id] = flashNode;
+    };
+    
+    this.reset = function() {
+      if(!active) return false;
+      
+      for(var i = 0; i < sIFR.replacements.length; i++) {
+        var flash = sIFR.replacements[i];
+        var flashNode = registry[flash.id];
+        if(!resetMovies[flash.id] && (!flashNode.parentNode || flashNode.parentNode.nodeType == 11)) {
+          flash.resetMovie();
+          resetMovies[flash.id] = true;
+        }
+      }
+      
+      return true;
+    };
+    
+    this.cleanup = function(id, usePlaceholder) {
+      var node = registry[id];
+      if(!node) return;
+      
+      for(var expando in node) {
+        if(typeof(node[expando]) == 'function') node[expando] = null;
+      }
+      registry[id] = null;
+      if(fixFlash) window[id] = null;
+      
+      if(node.parentNode) {
+        if(usePlaceholder && node.parentNode.nodeType == 1) {
+          // Replace the Flash node by a placeholde element with the same dimensions. This stops the page from collapsing
+          // when the Flash movies are removed.
+          var placeholder          = document.createElement('div');
+          placeholder.style.width  = node.offsetWidth  + 'px';
+          placeholder.style.height = node.offsetHeight + 'px';
+          node.parentNode.replaceChild(placeholder, node);
+        } else {
+          node.parentNode.removeChild(node);
+        }
+      }
+    };
+    
+    this.prepareClearReferences = function() {
+      if(!fixFlash) return;
+      
+      // Disable Flash cleanup, see <http://blog.deconcept.com/2006/05/18/flash-player-bug-streaming-content-innerhtml-ie/>
+      // for more info.
+      __flash_unloadHandler      = function(){};
+      __flash_savedUnloadHandler = function(){};
+    };
+    
+    this.clearReferences = function() {
+      // Since we've disabled Flash' own cleanup, add all objects on the page to our registry so they can be cleaned up.
+      if(fixFlash) {
+        var objects = document.getElementsByTagName('object');
+        for(var i = objects.length - 1; i >= 0; i--) registry[objects[i].getAttribute('id')] = objects[i];
+      }
+      
+      for(var id in registry) {
+        if(Object.prototype[id] != registry[id]) this.cleanup(id, true);
+      }
+    };
+  }
+  
   function FlashInteractor(sIFR, id, vars, forceWidth, events) {
     this.sIFR         = sIFR;
     this.id           = id;
     this.vars         = vars;
     // Type of value depends on SWF builder. This could use some improvement!
     this.movie        = null;
-  
+    
     this.__forceWidth = forceWidth;
     this.__events     = events;
     this.__resizing   = 0;
@@ -573,35 +701,45 @@ var sIFR = new function() {
     getFlashElement: function() {
       return document.getElementById(this.id);
     },
-  
+    
     getAlternate: function() {
       return document.getElementById(this.id + '_alternate');
     },
-  
+    
     getAncestor: function() {
       var ancestor = this.getFlashElement().parentNode;
       return !this.sIFR.dom.hasClass(ClassNames.FIX_FOCUS, ancestor) ? ancestor : ancestor.parentNode;
     },
-  
+    
     available: function() {
       var flashNode = this.getFlashElement();
       return flashNode && flashNode.parentNode;
     },
     
     call: function(type) {
-      if(!this.available()) return false;
-  
       var flashNode = this.getFlashElement();
+      
+      if (!flashNode[type]) {
+        return false;
+      }
+      // In Firefox 2, exposed Flash methods aren't proper functions, there's no `apply()` method! This workaround
+      // does work, though.
+      return Function.prototype.apply.call(flashNode[type], flashNode, Array.prototype.slice.call(arguments, 1));
+    },
+    
+    attempt: function() {
+      if(!this.available()) return false;
+      
       try {
-        flashNode[type].apply(flashNode, Array.prototype.slice.call(arguments, 1));
+        this.call.apply(this, arguments);
       } catch(e) {
         if(this.sIFR.debug) throw e;
         return false;
       }
-    
+      
       return true;
     },
-  
+    
     updateVars: function(name, value) {
       for(var i = 0; i < this.vars.length; i++) {
         if (this.vars[i].split('=')[0] == name) {
@@ -609,42 +747,47 @@ var sIFR = new function() {
           break;
         }
       }
-    
+      
       var vars = this.sIFR.util.encodeVars(this.vars);
       this.movie.injectVars(this.getFlashElement(), vars);
       this.movie.injectVars(this.movie.html, vars);
     },
-  
+    
     storeSize: function(type, value) {
       this.movie.setSize(type, value);
       this.updateVars(type, value);
     },
-  
+    
     fireEvent: function(name) {
       if(this.available() && this.__events[name]) this.sIFR.util.delay(0, this.__events[name], this, this);
     },
     
     resizeFlashElement: function(height, width, firstResize) {
       if(!this.available()) return;
-  
+      
       this.__resizing++;
       
       var flashNode = this.getFlashElement();
       flashNode.setAttribute('height', height);
+      
+      // Reset element height as declared by `MovieCreator`
+      this.getAncestor().style.minHeight = '';
+      
       this.updateVars('renderheight', height);
       this.storeSize('height', height);
       if(width !== null) {
         flashNode.setAttribute('width', width);
-        this.storeSize('width', width);
+        // Don't store the size, it may cause Flash to wrap the text when the movie is reset.
+        this.movie.setSize('width', width);
       }
       if(this.__events.onReplacement) {
         this.sIFR.util.delay(0, this.__events.onReplacement, this, this);
         delete this.__events.onReplacement;
       }
-    
+      
       if(firstResize) {
         this.sIFR.util.delay(0, function() {
-          this.call('scaleMovie');
+          this.attempt('scaleMovie');
           this.__resizing--;
         }, this);
       } else {
@@ -655,12 +798,12 @@ var sIFR = new function() {
     blurFlashElement: function() {
       if(this.available()) this.sIFR.dom.blurElement(this.getFlashElement());
     },
-  
+    
     resetMovie: function() {
       this.sIFR.util.delay(0, this.movie.reset, this.movie, this.getFlashElement(), this.getAlternate());
     },
     
-    resizeAfterScale: function(b,a) {
+    resizeAfterScale: function() {
       if(this.available() && this.__resizing == 0) this.sIFR.util.delay(0, this.resize, this);
     },
     
@@ -668,26 +811,26 @@ var sIFR = new function() {
       if(!this.available()) return;
       
       this.__resizing++;
-  
+      
       var flashNode      = this.getFlashElement();
       var currentWidth   = flashNode.offsetWidth;
-    
+      
       // The Flash movie has no dimensions, which means it's not visible anyway. No need to recalculate.
       if(currentWidth == 0) return;
-  
+      
       var originalWidth  = flashNode.getAttribute('width');
       var originalHeight = flashNode.getAttribute('height');
-  
+      
       var ancestor       = this.getAncestor();
       var minHeight      = this.sIFR.dom.getHeightFromStyle(ancestor);
-  
+      
       // Remove Flash movie from flow
       flashNode.style.width  = '1px';
       flashNode.style.height = '1px';
-    
+      
       // Set a minimal height on the flashNode's parent, to stop a reflow
-      ancestor.style.minHeight = minHeight + "px";
-    
+      ancestor.style.minHeight = minHeight + 'px';
+      
       // Restore original content
       var nodes = this.getAlternate().childNodes;
       var clones = [];
@@ -696,34 +839,42 @@ var sIFR = new function() {
         clones.push(node);
         ancestor.appendChild(node);
       }
-    
+      
       // Calculate width
       var width = this.sIFR.dom.getWidthFromStyle(ancestor);
-  
+      
       // Remove original content again
       for(var i = 0; i < clones.length; i++) ancestor.removeChild(clones[i]);
-  
+      
       // Reset Flash movie flow
       flashNode.style.width = flashNode.style.height = ancestor.style.minHeight = '';
       flashNode.setAttribute('width', this.__forceWidth ? width : originalWidth);
       flashNode.setAttribute('height', originalHeight);
-  
+      
+      // IE can get mightily confused about where to draw the Flash <object>. This is a workaround to force IE to repaint
+      // the <object>.
+      if(sIFR.ua.ie) {
+        flashNode.style.display = 'none';
+        var repaint = flashNode.offsetHeight;
+        flashNode.style.display = '';
+      }
+      
       // Resize!
       if(width != currentWidth) {
         if(this.__forceWidth) this.storeSize('width', width);
-        this.call('resize', width);
+        this.attempt('resize', width);
       }
       
       this.__resizing--;
     },
-  
+    
     // `content` must not be util.escaped when passed in.
     // alternate may be an array of nodes to be appended to the alternate content, use this
     // in XHTML documents.
     replaceText: function(content, alternate) {
       var escapedContent = this.sIFR.util.escape(content);
-      if(!this.call('replaceText', escapedContent)) return false;
-  
+      if(!this.attempt('replaceText', escapedContent)) return false;
+      
       this.updateVars('content', escapedContent);
       var node = this.getAlternate();
       if(alternate) {
@@ -732,28 +883,32 @@ var sIFR = new function() {
       } else {
         try { node.innerHTML = content; } catch(e) {};
       }
-  
+      
       return true;
     },
-  
+    
     changeCSS: function(css) {
       css = this.sIFR.util.escape(this.sIFR.util.cssToString(this.sIFR.util.convertCssArg(css)));
       this.updateVars('css', css);
-      return this.call('changeCSS', css);
+      return this.attempt('changeCSS', css);
+    },
+    
+    remove: function() {
+      if(this.movie && this.available()) this.movie.remove(this.getFlashElement(), this.id);
     }
   };
   
   var MovieCreator = new function() {
-    this.create = function(sIFR, node, fixFocus, id, src, width, height, vars, wmode, backgroundColor) {
+    this.create = function(sIFR, brokenFlash, node, fixFocus, id, src, width, height, vars, wmode, backgroundColor) {
       var klass = sIFR.ua.ie ? IEFlashMovie : FlashMovie;
       return new klass(
-        sIFR, node, fixFocus, 
+        sIFR, brokenFlash, node, fixFocus, 
         id, src, width, height, 
         ['flashvars', vars, 'wmode', wmode, 'bgcolor', backgroundColor, 'allowScriptAccess', 'always', 'quality', 'best']
       );
     }
     
-    function FlashMovie(sIFR, node, fixFocus, id, src, width, height, params) {
+    function FlashMovie(sIFR, brokenFlash, node, fixFocus, id, src, width, height, params) {
       var object = sIFR.dom.create('object', ClassNames.FLASH);
       var attrs  = ['type', 'application/x-shockwave-flash', 'id', id, 'name', id, 'data', src, 'width', width, 'height', height];
       for(var i = 0; i < attrs.length; i += 2) object.setAttribute(attrs[i], attrs[i + 1]);
@@ -766,16 +921,20 @@ var sIFR = new function() {
       
       for(var i = 0; i < params.length; i+=2) {
         if(params[i] == 'name') continue;
-  
+        
         var param = dom.create('param');
         param.setAttribute('name', params[i]);
         param.setAttribute('value', params[i + 1]);
         object.appendChild(param);
       }
       
+      // Before removing the existing content, set its height such that the element
+      // does not collapse. Height is restored in `FlashInteractor#resizeFlashElement`.
+      node.style.minHeight = height + 'px';
+      
       while(node.firstChild) node.removeChild(node.firstChild);
       node.appendChild(insertion);
-  
+      
       this.html = insertion.cloneNode(true);
     }
     
@@ -783,11 +942,15 @@ var sIFR = new function() {
       reset: function(flashNode, alternate) {
         flashNode.parentNode.replaceChild(this.html.cloneNode(true), flashNode);
       },
-  
+      
+      remove: function(flashNode, id) {
+        flashNode.parentNode.removeChild(flashNode);
+      },
+      
       setSize: function(type, value) {
         this.html.setAttribute(type, value);
       },
-  
+      
       injectVars: function(flash, encodedVars) {
         var params = flash.getElementsByTagName('param');
         for(var i = 0; i < params.length; i++) {
@@ -798,9 +961,10 @@ var sIFR = new function() {
         }
       }
     };
-  
-    function IEFlashMovie(sIFR, node, fixFocus, id, src, width, height, params) {
-      this.dom = sIFR.dom;
+    
+    function IEFlashMovie(sIFR, brokenFlash, node, fixFocus, id, src, width, height, params) {
+      this.dom    = sIFR.dom;
+      this.broken = brokenFlash;
       
       this.html = '<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" id="' + id +
         '" width="' + width + '" height="' + height + '" class="' + ClassNames.FLASH + '">' +
@@ -811,20 +975,33 @@ var sIFR = new function() {
         paramsHtml += '<param name="' + params[i] + '" value="' + params[i + 1] + '"></param>';
       }
       this.html      = this.html.replace(/(<\/object>)/, paramsHtml + '$1');
+      
+      // Before removing the existing content, set its height such that the element
+      // does not collapse. Height is restored in `FlashInteractor#resizeFlashElement`.
+      node.style.minHeight = height + 'px';
+      
       node.innerHTML = this.html;
+      
+      this.broken.register(node.firstChild);
     }
     
     IEFlashMovie.prototype = {
       reset: function(flashNode, alternate) {
-        var parent = flashNode.parentNode;
-        parent.innerHTML = this.html;
+        alternate            = alternate.cloneNode(true);
+        var parent           = flashNode.parentNode;
+        parent.innerHTML     = this.html;
+        this.broken.register(parent.firstChild);
         parent.appendChild(alternate);
+      },
+      
+      remove: function(flashNode, id) {
+        this.broken.cleanup(id);
       },
       
       setSize: function(type, value) {
          this.html = this.html.replace(type == 'height' ? /(height)="\d+"/ : /(width)="\d+"/, '$1="' + value + '"');
       },
-  
+      
       injectVars: function(flash, encodedVars) {
         if(flash != this.html) return;
         this.html = this.html.replace(/(flashvars(=|\"\svalue=)\")[^\"]+/, '$1' + encodedVars);
@@ -839,9 +1016,11 @@ var sIFR = new function() {
   var hacks   = {
     fragmentIdentifier:     new FragmentIdentifier(self),
     pageLoad:               new PageLoad(self),
-    prefetch:               new Prefetch(self)
+    prefetch:               new Prefetch(self),
+    brokenFlashIE:          new BrokenFlashIE(self)
   };
-
+  this.__resetBrokenMovies = hacks.brokenFlashIE.reset;
+  
   var replaceKwargsStore = {
     kwargs: [],
     replaceAll:  function(preserve) {
@@ -849,55 +1028,51 @@ var sIFR = new function() {
       if(!preserve) this.kwargs = [];
     }
   };
-
+  
   this.activate = function(/* … */) {
     if(!ua.supported || !this.isEnabled || this.isActive || !isValidDomain() || isFile()) return;
-    if(ua.requiresPrefetch) hacks.prefetch.fetchMovies(arguments);
-
+    hacks.prefetch.fetchMovies(arguments);
+    
     this.isActive = true;
     this.setFlashClass();
     hacks.fragmentIdentifier.cache();
-
+    hacks.pageLoad.attachUnload();
+    
     if(!this.autoInitialize) return;
     
     hacks.pageLoad.attach();
-    if(ua.ie) {
-      window.attachEvent('onunload', function() { 
-        dom.addClass(ClassNames.UNLOADING, document.documentElement);
-      });
-    }
   };
-
+  
   this.setFlashClass = function() {
     if(this.hasFlashClassSet) return;
-
+    
     dom.addClass(ClassNames.ACTIVE, dom.getBody() || document.documentElement);
     this.hasFlashClassSet = true;
   };
-
+  
   this.removeFlashClass = function() {
     if(!this.hasFlashClassSet) return;
-
+    
     dom.removeClass(ClassNames.ACTIVE, dom.getBody());
     dom.removeClass(ClassNames.ACTIVE, document.documentElement);
     this.hasFlashClassSet = false;
   };
-
+  
   this.initialize = function(preserveReplacements) {
     if(!this.isActive || !this.isEnabled) return;
     if(isInitialized) {
       if(!preserveReplacements) replaceKwargsStore.replaceAll(false);
       return;
     }
-
+    
     isInitialized = true;
     replaceKwargsStore.replaceAll(preserveReplacements);
-
+    
     if(self.repaintOnResize) {
       if(window.addEventListener) window.addEventListener('resize', resize, false);
       else window.attachEvent('onresize', resize);
     }
-
+    
     hacks.prefetch.clear();
   };
   
@@ -909,14 +1084,14 @@ var sIFR = new function() {
     // object have priority over those in the first. The first object is unmodified
     // for further use, the resulting second object will be used in the replacement.
     if(mergeKwargs) kwargs = util.copyProperties(kwargs, mergeKwargs);
-
+    
     if(!isInitialized) return replaceKwargsStore.kwargs.push(kwargs);
-
+    
     if(this.onReplacementStart) this.onReplacementStart(kwargs);
-
+    
     var nodes = kwargs.elements || dom.querySelectorAll(kwargs.selector);
     if(nodes.length == 0) return;
-
+    
     var src             = getSource(kwargs.src);
     var css             = util.convertCssArg(kwargs.css);
     var filters         = getFilters(kwargs.filters);
@@ -929,10 +1104,10 @@ var sIFR = new function() {
     var pixelFont       = kwargs.pixelFont === true;
     var tuneHeight      = parseInt(kwargs.tuneHeight) || 0;
     var events          = !!kwargs.onRelease || !!kwargs.onRollOver || !!kwargs.onRollOut;
-
+    
     // Alignment should be handled by the browser in this case.
     if(fitExactly) util.extractFromCss(css, '.sIFR-root', 'text-align', true);
-
+    
     var fontSize        = util.extractFromCss(css, '.sIFR-root', 'font-size', true)        || '0';
     var backgroundColor = util.extractFromCss(css, '.sIFR-root', 'background-color', true) || '#FFFFFF';
     var kerning         = util.extractFromCss(css, '.sIFR-root', 'kerning', true)          || '';
@@ -948,7 +1123,7 @@ var sIFR = new function() {
     fontSize            = /^\d+(px)?$/.test(fontSize) ? parseInt(fontSize) : 0;
     // Make sure to support percentages and decimals
     opacity             = parseFloat(opacity) < 1 ? 100 * parseFloat(opacity) : opacity;
-
+    
     var cssText = kwargs.modifyCss ? '' : util.cssToString(css);
     var wmode   = kwargs.wmode || '';
     if(!wmode) {
@@ -958,72 +1133,79 @@ var sIFR = new function() {
     if(wmode == 'transparent') {
       if(!ua.transparencySupport) wmode = 'opaque';
       else backgroundColor = 'transparent';
+    } else if(backgroundColor == 'transparent') {
+      backgroundColor = '#FFFFFF';
     }
-
+    
     for(var i = 0; i < nodes.length; i++) {
       var node = nodes[i];
-
+      
       if(dom.hasOneOfClassses(ClassNames.IGNORE_CLASSES, node) || dom.ancestorHasClass(node, ClassNames.ALTERNATE)) continue;
-
+      
       // Opera does not allow communication with hidden Flash movies. Visibility is tackled by sIFR itself, but
       // `display:none` isn't. Additionally, WebKit does not return computed style information for elements with
       // `display:none`. We'll prevent elements which have `display:none` or are contained in such an element from
       // being replaced. It's a bit hard to detect this, but we'll check for the dimensions of the element and its
       // `display` property.
-
+      
       var dimensions = dom.getDimensions(node);
       var height     = dimensions.height;
       var width      = dimensions.width;
       var display    = dom.getComputedStyle(node, 'display');
-
+      
       if(!height || !width || !display || display == 'none') continue;
-
+      
       // Get the width (to approximate the final size).
       width = dom.getWidthFromStyle(node);
-
+      
       var size, lines;
       if(!fontSize) {
         var calculation    = calculate(node);
         size               = Math.min(this.MAX_FONT_SIZE, Math.max(this.MIN_FONT_SIZE, calculation.fontSize));
         if(pixelFont) size = Math.max(8, 8 * Math.round(size / 8));
-
+        
         lines = calculation.lines;
-        if(isNaN(lines) || !isFinite(lines) || lines == 0) lines = 1;
-        if(lines > 1 && leading) height += Math.round((lines - 1) * leading);
       } else {
         size  = fontSize;
         lines = 1;
       }
-
+      
       var alternate = dom.create('span', ClassNames.ALTERNATE);
       // Clone the original content to the alternate element.
       var contentNode = node.cloneNode(true);
       // Temporarily append the contentNode to the document, to get around IE problems with resolved hrefs
       node.parentNode.appendChild(contentNode);
       for(var j = 0, l = contentNode.childNodes.length; j < l; j++) {
-        alternate.appendChild(contentNode.childNodes[j].cloneNode(true));
+        var child = contentNode.childNodes[j];
+        // Let's not keep <style> or <script> in the alternate content, since it may be
+        // reintroduced to the DOM after resizing.
+        if (!/^(style|script)$/i.test(child.nodeName)) {
+          alternate.appendChild(child.cloneNode(true));
+        }
       }
-
+      
       // Allow the sIFR content to be modified
       if(kwargs.modifyContent) kwargs.modifyContent(contentNode, kwargs.selector);
       if(kwargs.modifyCss) cssText = kwargs.modifyCss(css, contentNode, kwargs.selector);
-
+      
       var content = parseContent(contentNode, textTransform, kwargs.uriEncode);
       // Remove the contentNode again
       contentNode.parentNode.removeChild(contentNode);
       if(kwargs.modifyContentString) content.text = kwargs.modifyContentString(content.text, kwargs.selector);
       if(content.text == '') continue;
       
-      height = Math.round(lines * size);
       // Approximate the final height to avoid annoying movements of the page
       var renderHeight = Math.round(lines * getRatio(size, ratios) * size) + this.FLASH_PADDING_BOTTOM + tuneHeight;
+      if (lines > 1 && leading) {
+        renderHeight += Math.round((lines - 1) * leading);
+      }
+      
       var forcedWidth = forceWidth ? width : '100%';
       
       var id   = 'sIFR_replacement_' + elementCount++;
       var vars = ['id='              + id,
                   'content='         + util.escape(content.text),
                   'width='           + width,
-                  'height='          + height,
                   'renderheight='    + renderHeight, 
                   'link='            + util.escape(content.primaryLink.href   || ''),
                   'target='          + util.escape(content.primaryLink.target || ''),
@@ -1045,11 +1227,15 @@ var sIFR = new function() {
                   'flashfilters='    + filters,
                   'opacity='         + opacity,
                   'blendmode='       + (kwargs.blendMode || ''), 
-                  'selectable='      + (kwargs.selectable == null ? 'true' : kwargs.selectable === true),
-                  'fixhover='        + (this.fixHover === true), 
-                  'events='          + events, 
+                  'selectable='      + (kwargs.selectable == null || wmode != '' && !sIFR.ua.macintosh && sIFR.ua.gecko && sIFR.ua.geckoVersion >= sIFR.ua.parseVersion('1.9')
+                                         ? 'true' 
+                                         : kwargs.selectable === true
+                                       ),
+                  'fixhover='        + (this.fixHover === true),
+                  'events='          + events,
+                  'delayrun='        + hacks.brokenFlashIE.fixFlash,
                   'version='         + this.VERSION];
-
+      
       var encodedVars = util.encodeVars(vars);
       var interactor  = new FlashInteractor(self, id, vars, forceWidth, {
         onReplacement: kwargs.onReplacement,
@@ -1058,7 +1244,7 @@ var sIFR = new function() {
         onRelease: kwargs.onRelease
       });
       interactor.movie = MovieCreator.create(
-        sIFR, node, ua.fixFocus && kwargs.fixFocus, 
+        sIFR, hacks.brokenFlashIE, node, ua.fixFocus && kwargs.fixFocus, 
         id, src, forcedWidth, renderHeight, 
         encodedVars, wmode, backgroundColor
       );
@@ -1072,10 +1258,10 @@ var sIFR = new function() {
       node.appendChild(alternate);
       dom.addClass(ClassNames.REPLACED, node);
     }
-
+    
     hacks.fragmentIdentifier.restore();
   };
-
+  
   this.getReplacementByFlashElement = function(node) {
     for(var i = 0; i < self.replacements.length; i++) {
       if(self.replacements[i].id == node.getAttribute('id')) return self.replacements[i];
@@ -1086,20 +1272,31 @@ var sIFR = new function() {
     for(var i = 0; i < self.replacements.length; i++) self.replacements[i].resetMovie();
   };
   
+  this.prepareClearReferences = function() {
+    hacks.brokenFlashIE.prepareClearReferences();
+  };
+  
+  this.clearReferences = function() {
+    hacks.brokenFlashIE.clearReferences();
+    hacks = null;
+    replaceKwargsStore = null;
+    delete self.replacements;
+  };
+  
   // The goal here is not to prevent usage of the Flash movie, but running sIFR on possibly translated pages
   function isValidDomain() {
     if(self.domains.length == 0) return true;
-
+    
     var domain = util.domain();
     for(var i = 0; i < self.domains.length; i++) {
       if(util.domainMatches(domain, self.domains[i])) {
         return true;
       }
     }
-
+    
     return false;
   }
-
+  
   function isFile() {
     if(document.location.protocol == 'file:') {
       if(self.debug) self.errors.fire('isFile');
@@ -1112,10 +1309,10 @@ var sIFR = new function() {
     if(ua.ie && src.charAt(0) == '/') {
       src = window.location.toString().replace(/([^:]+)(:\/?\/?)([^\/]+).*/, '$1$2$3') + src;
     }
-
+    
     return src;
   }
-
+  
   // Gives a font-size to required vertical space ratio
   function getRatio(size, ratios) {
     for(var i = 0; i < ratios.length; i += 2) {
@@ -1123,114 +1320,89 @@ var sIFR = new function() {
     }
     return ratios[ratios.length - 1] || 1;
   }
-
+  
   function getFilters(obj) {
     var filters = [];
     for(var filter in obj) {
       if(obj[filter] == Object.prototype[filter]) continue;
-
+      
       var properties = obj[filter];
       filter = [filter.replace(/filter/i, '') + 'Filter'];
-
+      
       for(var property in properties) {
         if(properties[property] == Object.prototype[property]) continue;
         // Double-escaping (see end of function) makes it easier to parse the resulting string
         // in AS.
         filter.push(property + ':' + util.escape(util.toJson(properties[property], util.toHexString)));
       }
-
+      
       filters.push(filter.join(','));
     }
-
+    
     return util.escape(filters.join(';'));
   }
   
   function resize(evt) {
     var current  = resize.viewport;
     var viewport = dom.getViewport();
-
-    if(current && viewport.width == current.width && viewport.height == current.height) {
-      return;
-    }
     
+    if(current && viewport.width == current.width && viewport.height == current.height) return;
     resize.viewport = viewport;
+    
+    if(self.replacements.length == 0) return; // Nothing replaced yet, resize event is not important.
+    
     if(resize.timer) clearTimeout(resize.timer);
     resize.timer = setTimeout(function() {
       delete resize.timer;
       for(var i = 0; i < self.replacements.length; i++) self.replacements[i].resize();
     }, 200);
   }
-
+  
   function calculate(node) {
-    var fontSize, lines;
-    if(!ua.ie) { //:=todo Only do once for each selector?
-      fontSize = dom.getStyleAsInt(node, 'lineHeight');
-      lines = Math.floor(dom.getStyleAsInt(node, 'height') / fontSize);
-    } else if(ua.ie) {
-      // IE returs computed style in the original units, which is quite useless.
-      // Therefore we'll only use the fontSize if it's in pixel units, otherwise we'll approximate.
-      var fontSize = dom.getComputedStyle(node, 'fontSize');
-      if(fontSize.indexOf('px') > 0) {
-        fontSize = parseInt(fontSize);
-      } else {
-        var html = node.innerHTML;
-
-        // Without these settings, we won't be able to get the rects properly. getClientRects()
-        // won't work on elements having layout or that are hidden.
-        node.style.visibility  = 'visible';
-        node.style.overflow    = 'visible';
-        node.style.position    = 'static';
-        node.style.zoom        = 'normal';
-        node.style.writingMode = 'lr-tb';
-        node.style.width       = node.style.height = 'auto';
-        node.style.maxWidth    = node.style.maxHeight = node.style.styleFloat  = 'none';
-      
-        var rectNode = node;
-        var hasLayout = node.currentStyle.hasLayout;
-        if(hasLayout) {
-          node.innerHTML = '<div class="' + ClassNames.LAYOUT + '">X<br>X<br>X</div>';
-          rectNode = node.firstChild;
-        } else node.innerHTML = 'X<br>X<br>X';
-
-        var rects = rectNode.getClientRects();
-        fontSize = rects[1].bottom - rects[1].top;
-
-        // In IE, the lineHeight is about 1.25 times the height in other browsers.
-        fontSize = Math.ceil(fontSize * 0.8);
-
-        if(hasLayout) {
-          node.innerHTML = '<div class="' + ClassNames.LAYOUT + '">' + html + '</div>';
-          rectNode = node.firstChild;
-        } else node.innerHTML = html;
-        rects = rectNode.getClientRects();
-        lines = rects.length;
-
-        if(hasLayout) node.innerHTML = html;
-
-        // By setting an empty string, the values will fall back to those in the (non-inline) CSS.
-        // When that CSS changes, the changes are reflected here. Setting explicit values would break
-        // that behaviour.
-        node.style.visibility = node.style.width = node.style.height = node.style.maxWidth 
-                              = node.style.maxHeight = node.style.overflow = node.style.styleFloat
-                              = node.style.position = node.style.zoom = node.style.writingMode 
-                              = '';
-      }
+    var fontSize = dom.getComputedStyle(node, 'fontSize');
+    var deduce = fontSize.indexOf('px') == -1;
+    
+    var html = node.innerHTML;
+    if (deduce) {
+      node.innerHTML = 'X';
+    }
+    
+    // Reset padding and border, so offsetHeight works properly
+    node.style.paddingTop = node.style.paddingBottom = node.style.borderTopWidth = node.style.borderBottomWidth = '0px';
+    // 2em magically makes offsetHeight correct in IE
+    node.style.lineHeight = '2em';
+    // Provided display is block
+    node.style.display = 'block';
+    
+    fontSize = deduce ? node.offsetHeight / 2 : parseInt(fontSize, 10);
+    
+    if (deduce) {
+      node.innerHTML = html;
+    }
+    
+    var lines = Math.round(node.offsetHeight / (2 * fontSize));
+    
+    node.style.paddingTop = node.style.paddingBottom = node.style.borderTopWidth = node.style.borderBottomWidth
+                          = node.style.lineHeight = node.style.display = '';
+    
+    if (isNaN(lines) || !isFinite(lines) || lines == 0) {
+      lines = 1;
     }
     
     return {fontSize: fontSize, lines: lines};
   }
-
+  
   function parseContent(source, textTransform, uriEncode) {
     uriEncode = uriEncode || util.uriEncode;
     var stack = [], content = [];
     var primaryLink = null;
     var nodes = source.childNodes;
     var whiteSpaceEnd = false, firstText = false;
-
+    
     var i = 0;
     while(i < nodes.length) {
       var node = nodes[i];
-
+      
       if(node.nodeType == 3) {
         var text = util.textTransform(textTransform, util.normalize(node.nodeValue)).replace(/</g, '&lt;');
         if(whiteSpaceEnd && firstText) text = text.replace(/^\s+/, '');
@@ -1238,8 +1410,8 @@ var sIFR = new function() {
         whiteSpaceEnd = /\s$/.test(text);
         firstText = false;
       }
-
-      if(node.nodeType == 1) {
+      
+      if(node.nodeType == 1 && !/^(style|script)$/i.test(node.nodeName)) {
         var attributes = [];
         var nodeName   = node.nodeName.toLowerCase();
         var className  = node.className || '';
@@ -1251,7 +1423,7 @@ var sIFR = new function() {
           else className = className.match(/^([^\s]+)/)[1];
         }
         if(className != '') attributes.push('class="' + className + '"');
-
+        
         if(nodeName == 'a') {
           var href   = uriEncode(node.getAttribute('href') || '');
           var target = node.getAttribute('target') || '';
@@ -1267,7 +1439,7 @@ var sIFR = new function() {
         
         content.push('<' + nodeName + (attributes.length > 0 ? ' ' : '') + attributes.join(' ') + '>');
         firstText = true;
-
+        
         if(node.hasChildNodes()) {
           // Push the current index to the stack and prepare to iterate
           // over the childNodes.
@@ -1277,7 +1449,7 @@ var sIFR = new function() {
           continue;
         } else if(!/^(br|img)$/i.test(node.nodeName)) content.push('</', node.nodeName.toLowerCase(), '>');
       }
-
+      
       if(stack.length > 0 && !node.nextSibling) {
         // Iterating the childNodes has been completed. Go back to the position
         // before we started the iteration. If that position was the last child,
@@ -1289,23 +1461,23 @@ var sIFR = new function() {
           if(node) content.push('</', node.nodeName.toLowerCase(), '>');
         } while(i == nodes.length - 1 && stack.length > 0);
       }
-
+      
       i++;
     }
-  
+    
     return {text: content.join('').replace(/^\s+|\s+$|\s*(<br>)\s*/g, '$1'), primaryLink: primaryLink || {}};
   }
 };
 
 /*=:project
-    parseSelector 2.0.1
+    parseSelector 2.0.2
     
   =:description
     Provides an extensible way of parsing CSS selectors against a DOM in 
     JavaScript.
 
   =:file
-    Copyright: 2006-2007 Mark Wubben.
+    Copyright: 2006-2008 Mark Wubben.
     Author: Mark Wubben, <http://novemberborn.net/>
        
   =:license
@@ -1332,7 +1504,8 @@ var parseSelector = (function() {
   var SEPERATOR       = /\s*,\s*/
   var WHITESPACE      = /\s*([\s>+~(),]|^|$)\s*/g;
   var IMPLIED_ALL     = /([\s>+~,]|[^(]\+|^)([#.:@])/g;
-  var STANDARD_SELECT = /^[^\s>+~]/;
+  var STANDARD_SELECT = /(^|\))[^\s>+~]/g;
+  var INSERT_SPACE    = /(\)|^)/;
   var STREAM          = /[\s#.:>+~()@]|[^\s#.:>+~()@]+/g;
   
   function parseSelector(selector, node) {
@@ -1356,9 +1529,12 @@ var parseSelector = (function() {
   }
 
   function toStream(selector) {
-    var stream = selector.replace(WHITESPACE, '$1').replace(IMPLIED_ALL, '$1*$2');
-    if(STANDARD_SELECT.test(stream)) stream = ' ' + stream;
+    var stream = selector.replace(WHITESPACE, '$1').replace(IMPLIED_ALL, '$1*$2').replace(STANDARD_SELECT, insertSpaces);
     return stream.match(STREAM) || [];
+  }
+  
+  function insertSpaces(str) {
+    return str.replace(INSERT_SPACE, '$1 ');
   }
   
   function select(nodes, token, filter, args) {
