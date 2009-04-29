@@ -1,5 +1,5 @@
 TODO Clean up logout process for management interface.
-TODO Highlight lessonslots on calendar different colors based on instructor assigned.
+TODO Create function to generate email in external client to verify lessons.
 TODO *Maybe* Create Registration app to allow online registration. 
 		No payments just simple form to approval
 		Form will create a parent object with multiple child objects attached. Then submit a registration request for approval by Candace. 

@@ -7,6 +7,12 @@
 	<h1 class="monthtitle"><span class="monthtitle">{{ current_month }}</span></h1>
 	<a class="next_month" href="/schedule/season/{{ season.id }}/view/month/{{ next_month }}">Next Month</a>
 </div>
+
+<div id="instructor_key">
+	<span class="instructor_victoria">Teacher Victoria</span><br />
+	<span class="instructor_pamela">Teacher Pamela</span><br />
+	<span class="instructor_jackie">Teacher Jackie</span>
+</div>
 	
 <table class="season_month_cal">
 	{% for week in calendar %}

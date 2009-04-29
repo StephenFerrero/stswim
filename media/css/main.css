@@ -293,13 +293,20 @@ table.detail td {
 /** Season Calendar Styles  **/
 
 #calendar_controls {
+	margin: auto;
+	width: 300px;
 	text-align: center;
-	clear: both;
 }
 
 .monthtitle {
 	width: 300px;
 	margin: auto;
+}
+
+#instructor_key {
+	float: right;
+	margin-top: -80px;
+	margin-right: 42px;
 }
 
 .prev_month {
