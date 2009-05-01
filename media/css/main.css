@@ -478,6 +478,10 @@ table.detail td {
 	float: right;
 }
 
+.floatleft {
+	float: left;
+}
+
 .hidden {
 	display: none;
 }
