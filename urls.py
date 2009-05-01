@@ -6,7 +6,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('django.views.generic.simple',
 		       
-		       (r'^$', 'direct_to_template', {'template': 'main2col.html'}), #Catch root url to homepage
+		       (r'^$', 'direct_to_template', {'template': 'main1col.html'}), #Catch root url to homepage
 		       (r'^manage/$', 'redirect_to', {'url': '/schedule/manage/'}),
 )
 

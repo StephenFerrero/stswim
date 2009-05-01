@@ -298,6 +298,7 @@ table.detail td {
 	border: 1px;
 	border-color: black;
 	padding: 25px 0 0 55px;
+	margin: 10px;
 	background-image: url(/media/img/download_button.png);
 }
 
@@ -468,6 +469,10 @@ table.detail td {
 
 .textleft {
 	text-align: left;
+}
+
+.textcenter {
+	text-align: center;
 }
 
 .clear {
