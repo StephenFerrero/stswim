@@ -289,6 +289,23 @@ table.detail td {
 	
 }
 
+/** General Styles **/
+
+.download_button {
+	display: block;
+	width: 153px;
+	height: 44px;
+	border: 1px;
+	border-color: black;
+	padding: 25px 0 0 55px;
+	background-image: url(/media/img/download_button.png);
+}
+
+.download_button:hover {
+	color: black;
+	text-decoration: underline;
+	background-position: 0 70px;
+}
 
 /** Season Calendar Styles  **/
 
