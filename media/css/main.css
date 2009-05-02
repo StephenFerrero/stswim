@@ -308,6 +308,14 @@ table.detail td {
 	background-position: 0 70px;
 }
 
+/** Instructor Info **/
+.instructor_photo {
+	border: 1px solid black;
+	padding: 4px;
+	margin: 10px;
+}
+
+
 /** Season Calendar Styles  **/
 
 #calendar_controls {
