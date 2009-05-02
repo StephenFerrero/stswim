@@ -67,7 +67,7 @@
 		 <tr><th>Time</th><th>Type</th><th>Student(s)</th><th>Instructor</th></tr>
 		 	{% for lessonslot in todayslessonslots %}
 		 		<tr class="{% cycle even,odd %}">
-		 			<td><a href="{% url view_lessonslot lessonslot_id=lessonslot.id %}">{{lessonslot.start_time|time:"g:i a"}}</a></td>
+		 			<td><a href="{% url view_lessonslot lessonslot_id=lessonslot.id %}">{{lessonslot.start_datetime|time:"g:i a"}}</a></td>
 		 			<td>{{lessonslot.lesson.lesson_type}}</td>
 		 			<td>{% for student in lessonslot.lesson.students.all %}{{student.first_name}}, {% endfor %}</td>
 		 			<td>{{lessonslot.intructor}}</td>

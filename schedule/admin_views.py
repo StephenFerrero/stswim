@@ -7,7 +7,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import permission_required
 from django.views.generic.list_detail import object_list
 from django.core.urlresolvers import reverse
-from datetime import date
+from datetime import date, datetime
 from models import *
 from forms import *
 from views import *
@@ -16,7 +16,9 @@ from stswim.accounts.forms import ParentEditForm
 @permission_required('schedule.can_viewfullschedule')
 def manageschedule(request):
 	#TODO: Get today's lessons based on logged in user, or default to all lessons
-	todayslessonslots = LessonSlot.objects.filter(start_datetime__exact = date.today(), status__exact = 'Booked')
+	today = date.today()
+	todayslessonslots = LessonSlot.objects.filter(start_datetime__year = today.year, start_datetime__month = today.month,
+													start_datetime__day = today.day, status__exact = 'Booked')
 	
 	#Dashboard search form
 	form = PersonSearchForm()
