@@ -35,12 +35,15 @@
 		<td class="{{ day.day|date:"D"|slice:":3" }} {% ifequal day.day today %}today{% endifequal %}">
 		<!-- lesson actually means lessonslot here -->
 			{% for lesson in day.lessons %}
-				{% if perms.schedule.can_viewfullschedule %}
 				<!--TODO: Change these urls to be dynamic using  url -->
-				<a href="/schedule/lessonslot/{{lesson.id}}/view/">
-					<span class="{% ifequal lesson.instructor.first_name "Victoria" %}instructor_victoria{% endifequal %}
-						{% ifequal lesson.instructor.first_name "Pamela" %}instructor_pamela{% endifequal %}
-						{% ifequal lesson.instructor.first_name "Jackie" %}instructor_jackie{% endifequal %}">
+				{% if perms.schedule.can_viewfullschedule %}<a href="/schedule/lessonslot/{{lesson.id}}/view/">{% endif %}
+					{% ifequal lesson.status "Closed" %}
+						<span class="calendar_lesson_closed">
+					{% else %}
+						<span class="{% ifequal lesson.instructor.first_name "Victoria" %}instructor_victoria{% endifequal %}
+							{% ifequal lesson.instructor.first_name "Pamela" %}instructor_pamela{% endifequal %}
+							{% ifequal lesson.instructor.first_name "Jackie" %}instructor_jackie{% endifequal %}">
+					{% endifequal %}
 						{{ lesson.start_datetime|time:"g:i A" }} -</span>
 					<span class="{% ifequal lesson.status "Closed" %}calendar_lesson_closed{% endifequal %}
 						{% ifequal lesson.status "Booked" %}calendar_lesson_booked{% endifequal %}
@@ -49,21 +52,7 @@
 						{% else %}{{ lesson.lesson.status }}
 						{% endif %}
 					</span>
-				</a>
-				{% else %}
-				<span class="{% ifequal lesson.instructor.first_name "Victoria" %}instructor_victoria{% endifequal %}
-					{% ifequal lesson.instructor.first_name "Pamela" %}instructor_pamela{% endifequal %}
-					{% ifequal lesson.instructor.first_name "Jackie" %}instructor_jackie{% endifequal %}">
-					{{ lesson.start_datetime|time:"g:i A" }} -</span>
-				<span class="{% ifequal lesson.status "Closed" %}calendar_lesson_closed{% endifequal %}
-					{% ifequal lesson.status "Booked" %}calendar_lesson_booked{% endifequal %}
-					{% ifequal lesson.status "Open" %}calendar_lesson_open{% endifequal %}">
-					{% if not lesson.lesson.status %}{{ lesson.status }}
-					{% else %}{{ lesson.lesson.status }}
-					{% endif %}
-				{% endif %}
-				</span>
-				<br />
+				{% if perms.schedule.can_viewfullschedule %}</a>{% endif %}
 			{% endfor %}
 			<br />
 		</td>
@@ -71,3 +60,7 @@
 		</tr>
 	{% endfor %}
 </table>
+<div id="calendar_controls_footer">
+	<a class="prev_month" href="/schedule/season/{{ season.id }}/view/month/{{ prev_month }}"><< Prev Month</a> - 
+	<a class="next_month" href="/schedule/season/{{ season.id }}/view/month/{{ next_month }}">Next Month >></a>
+</div>

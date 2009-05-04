@@ -324,6 +324,11 @@ table.detail td {
 	text-align: center;
 }
 
+#calendar_controls_footer {
+	margin: auto;
+	width: 250px;
+}
+
 .monthtitle {
 	width: 300px;
 	margin: auto;
