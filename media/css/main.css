@@ -407,7 +407,6 @@ table.detail td {
 .calendar_lesson_closed,
 .calendar_lesson_booked {
 	text-transform:uppercase;
-	font-size: 90%;
 	color: grey;
 }
 
