@@ -1,0 +1,19 @@
+{% extends 'schedule/base_manage.html' %}
+
+{% block title %}Search Lessons{% endblock %}
+
+{% block external %}<script src="/media/js/lesson_search.js" type="text/javascript"></script>{% endblock %}
+
+{% block manage_content %}
+	<form id="lessonsearch-form" method="get" action=".">
+		{{ form.as_p }}
+		<input type="submit" value="search" />
+	</form>
+	
+	<div id="lessonsearch-results">
+		{% if show_results %}
+			{% include 'schedule/lesson_list.html' %}
+		{% endif %}
+	</div>
+	
+{% endblock %}
