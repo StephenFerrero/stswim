@@ -9,6 +9,7 @@
 </div>
 
 <div id="instructor_key">
+	<span class="instructor_candace">Teacher Candace</span><br />
 	<span class="instructor_victoria">Teacher Victoria</span><br />
 	<span class="instructor_pamela">Teacher Pamela</span><br />
 	<span class="instructor_jackie">Teacher Jackie</span>
@@ -42,7 +43,8 @@
 					{% else %}
 						<span class="{% ifequal lesson.instructor.first_name "Victoria" %}instructor_victoria{% endifequal %}
 							{% ifequal lesson.instructor.first_name "Pamela" %}instructor_pamela{% endifequal %}
-							{% ifequal lesson.instructor.first_name "Jackie" %}instructor_jackie{% endifequal %}">
+							{% ifequal lesson.instructor.first_name "Jackie" %}instructor_jackie{% endifequal %}
+							{% ifequal lesson.instructor.first_name "Candace" %}instructor_candace{% endifequal %}">
 					{% endifequal %}
 						{{ lesson.start_datetime|time:"g:i A" }} -</span>
 					<span class="{% ifequal lesson.status "Closed" %}calendar_lesson_closed{% endifequal %}
