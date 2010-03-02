@@ -397,11 +397,15 @@ table.detail td {
 }
 
 .instructor_pamela {
-	color: #CC00FF;
+	color: green;
 }
 
 .instructor_jackie {
 	color: blue;
+}
+
+.instructor_candace {
+	color: #CC00FF;
 }
 
 .calendar_lesson_closed,
