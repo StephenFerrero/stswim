@@ -397,6 +397,10 @@ table.detail td {
 }
 
 .instructor_pamela {
+	color: green;
+}
+
+.instructor_candace {
 	color: #CC00FF;
 }
 
