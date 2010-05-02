@@ -58,7 +58,7 @@
 				<td>{{ lesson.lessonslot_set.all.0.start_time|time:"g:i a" }}</td>
 				<td>{{ lesson.lesson_type }}</td>
 				<td>{{ lesson.status }}</td>
-				<td>{% for student in lesson.students.all %}{{ student.first_name }} {% if not forloop.last %},{% endif %} {% endfor %}</td>
+				<td>{% for student in lesson.students.all %}{{ student.first_name }}{% if not forloop.last %},{% endif %} {% endfor %}</td>
 			</tr>
 		{% endfor %}
 		</table>
