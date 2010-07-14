@@ -225,7 +225,8 @@ td.error {
 	float: left;
 	clear: left;
 	border-right: 1px solid #CCCCCC;
-	padding: 50px 0 0 40px;
+	margin: 50px 0 0 0;
+	padding: 0 0 0 40px;
 }
 
 #col2 {
