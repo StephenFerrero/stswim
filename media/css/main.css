@@ -221,14 +221,15 @@ td.error {
 }
 
 #col1 {
-	width: 159px;
+	width: 139px;
 	float: left;
 	clear: left;
+	border-right: 1px solid #CCCCCC;
 	padding: 50px 0 0 40px;
 }
 
 #col2 {
-	width: 630px;
+	width: 650px;
 	float: right;
 	padding: 0 40px 0 10px;
 }

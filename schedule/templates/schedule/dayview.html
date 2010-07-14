@@ -16,7 +16,7 @@
 		 			<td>{{lessonslot.lesson.status}}</td>
 		 			{% if user.is_staff %}
 		 			<td>{{lessonslot.lesson.lesson_type}}</td>
-		 			<td>{% for student in lessonslot.lesson.students.all %}{{student.first_name}},{% endfor %}</td>
+		 			<td>{% for student in lessonslot.lesson.students.all %}{{student.first_name}}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
 		 			{% endif %}
 		 		</tr>
 		 	{% endfor %}
