@@ -8,11 +8,10 @@
 	<br />
 	{% if todayslessonslots %}
 		 <table class="data">
-		 <tr><th>Start Time</th><th>End Time</th><th>Status</th><th>Type</th><th>Student(s)</th></tr>
+		 <tr><th>Start Time</th><th>Status</th><th>Type</th><th>Student(s)</th></tr>
 		 	{% for lessonslot in todayslessonslots %}
 		 		<tr class="{% cycle even,odd %}">
 		 			<td><a href="{% url view_lessonslot lessonslot_id=lessonslot.id %}">{{lessonslot.start_time|time:"g:i a"}}</a></td>
-		 			<td>{{lessonslot.end_time|time:"g:i a"}}</td>
 		 			<td>{{lessonslot.lesson.status}}</td>
 		 			{% if user.is_staff %}
 		 			<td>{{lessonslot.lesson.lesson_type}}</td>
