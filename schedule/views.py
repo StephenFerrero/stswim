@@ -39,7 +39,7 @@ def viewday(request, year, month, day):
 	season = Season.objects.get(start_date__lte = display_date, end_date__gte = display_date)
 
 	todayslessonslots = LessonSlot.objects.filter(start_datetime__year = display_date.year, start_datetime__month = display_date.month,
-													start_datetime__day = display_date.day)
+													start_datetime__day = display_date.day, status__exact = 'Booked')
 	
 	return render_to_response("schedule/dayview.html", 
 								{'display_date' : display_date, 'todayslessonslots' : todayslessonslots, 'season' : season},
