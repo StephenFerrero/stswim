@@ -12,7 +12,7 @@
 			{% for parent in parents %}
 			<tr class="{% cycle even,odd %}">
 				<td><a href="{% url view_parent parent_id=parent.id %}">{{ parent.first_name }} {{ parent.last_name }}<a></td>
-				<td>{{ parent.phone }}</td>
+				<td>{{ parent.phone_number }}</td>
 				<td>{{ parent.email }}</td>
 				<td class="{% if parent.has_registrationform %}{% else %}error{% endif %}">{% if parent.has_registrationform %} Yes {% else %} No {% endif %}</td>
 				<td><a href="{% url edit_parent parent_id=parent.id %}">Edit</a></td>

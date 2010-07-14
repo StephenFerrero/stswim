@@ -70,7 +70,7 @@
 		 			<td><a href="{% url view_lessonslot lessonslot_id=lessonslot.id %}">{{lessonslot.start_datetime|time:"g:i a"}}</a></td>
 		 			<td>{{lessonslot.lesson.lesson_type}}</td>
 		 			<td>{% for student in lessonslot.lesson.students.all %}{{student.first_name}}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
-		 			<td>{{lessonslot.intructor}}</td>
+		 			<td>{{lessonslot.instructor}}</td>
 		 		</tr>
 		 	{% endfor %}
 		 </table>

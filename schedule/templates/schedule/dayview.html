@@ -7,13 +7,11 @@
 <h3>Lessons for {{display_date|date:"m/d/y"}}:</h3>
 	<br />
 	{% if todayslessonslots %}
-		<a href="{% url close_day season_id=season.id, year=display_date.year, month=display_date.month, day=display_date.day %}">Close Day</a>
-		<a href="{% url open_day season_id=season.id, year=display_date.year, month=display_date.month, day=display_date.day %}">Open Day</a>
 		 <table class="data">
 		 <tr><th>Start Time</th><th>End Time</th><th>Status</th><th>Type</th><th>Student(s)</th></tr>
 		 	{% for lessonslot in todayslessonslots %}
 		 		<tr class="{% cycle even,odd %}">
-		 			<td>{{lessonslot.start_time|time:"g:i a"}}</td>
+		 			<td><a href="{% url view_lessonslot lessonslot_id=lessonslot.id %}">{{lessonslot.start_time|time:"g:i a"}}</a></td>
 		 			<td>{{lessonslot.end_time|time:"g:i a"}}</td>
 		 			<td>{{lessonslot.lesson.status}}</td>
 		 			{% if user.is_staff %}
