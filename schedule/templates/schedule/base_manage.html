@@ -64,11 +64,12 @@
 	{% if todayslessonslots %}
 		<h3>Today's Lessons:</h3>
 		 <table class="data">
-		 <tr><th>Time</th><th>Type</th><th>Student(s)</th><th>Instructor</th></tr>
+		 <tr><th>Time</th><th>Status</th><th>Type</th><th>Student(s)</th><th>Instructor</th></tr>
 		 	{% for lessonslot in todayslessonslots %}
 		 		<tr class="{% cycle even,odd %}">
 		 			<td><a href="{% url view_lessonslot lessonslot_id=lessonslot.id %}">{{lessonslot.start_datetime|time:"g:i a"}}</a></td>
-		 			<td>{{lessonslot.lesson.lesson_type}}</td>
+		 			<td>{{lessonslot.lesson.status}}</td>
+					<td>{{lessonslot.lesson.lesson_type}}</td>
 		 			<td>{% for student in lessonslot.lesson.students.all %}{{student.first_name}}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
 		 			<td>{{lessonslot.instructor}}</td>
 		 		</tr>
