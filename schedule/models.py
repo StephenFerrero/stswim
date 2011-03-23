@@ -132,8 +132,8 @@ class Lesson(models.Model):
     
     def cancel(self):
         lessonslot = self.lessonslot_set.all()[0]
-        lessonslot.lesson = None
         lessonslot.status = 'Open'
+        lessonslot.lesson = None
         lessonslot.save()
         
         self.delete()

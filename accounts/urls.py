@@ -4,7 +4,7 @@ URLConf for User registration and authentication
 
 from django.conf.urls.defaults import *
 from django.contrib.auth.views import login, logout, password_change, password_change_done, password_reset, password_reset_done
-from stswim.accounts.views import activate
+from stswim.accounts.views import activate, registerparent
 
 urlpatterns = patterns('',
 	url(r'^login/$',  login, name="login"),
@@ -21,7 +21,7 @@ urlpatterns = patterns('',
 	url(r'^password/reset/$', password_reset, name='auth_password_reset'),
 	url(r'^password/reset/done/$', password_reset_done, name='auth_password_reset_done'),
 		
-	#(r'^parent/register/$', 'stswim.accounts.views.registerparent'),
+	url(r'^parent/register/$', 'stswim.accounts.views.registerparent', name='registration_parent'),
 	#(r'^employee/register/$', stswim.accounts.views.registeremployee),
 	
 	(r'^profile/$', 'stswim.accounts.views.UserProfile'),
