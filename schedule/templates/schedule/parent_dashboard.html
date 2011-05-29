@@ -1,0 +1,43 @@
+{% extends 'schedule/parent_manage.html' %}
+
+{% block title %}Parent Management Dashboard{% endblock %}
+
+{% block manage_content %}
+	<h2>Parent Management Dashboard:</h2>
+	<h3>Your Children:</h3>
+		{% if students %}
+		<table class="data">
+		<tr><th>Name</th><th>Age</th><th>Liability Form</th></tr>
+			{% for student in students %}
+			<tr class="{% cycle even,odd %}">
+				<td>{{ student.first_name }} {{ student.last_name }}</td>
+				<td>{{ student.birth_date|timesince }}</td>
+				<td class="{% if student.has_liabilityform %}{% else %}error{% endif %}">{% if student.has_liabilityform %} Yes {% else %} No {% endif %}</td>
+			</tr>
+			{% endfor %}
+		</table>
+		{% else %}
+			<em>No Students</em>
+		{% endif %}
+		<br />
+		<br />
+	
+	<h3>Household Lessons:</h3>
+	{% if household_lessons %}
+		<table class="data">
+			<tr><th>Day</th><th>Date</th><th>Start Time</th><th>Type</th><th>Status</th><th>Students</th></tr>
+		{% for lesson in household_lessons %}
+			<tr class="{% cycle even,odd %}">
+				<td>{{ lesson.lessonslot_set.all.0.start_datetime|date:"D" }}</td>
+				<td>{{ lesson.lessonslot_set.all.0.start_datetime|date:"m/d/y" }}</td>
+				<td>{{ lesson.lessonslot_set.all.0.start_time|time:"g:i a" }}</td>
+				<td>{{ lesson.lesson_type }}</td>
+				<td>{{ lesson.status }}</td>
+				<td>{% for student in lesson.students.all %}{{ student.first_name }}{% if not forloop.last %},{% endif %} {% endfor %}</td>
+			</tr>
+		{% endfor %}
+		</table>
+	{% else %}
+	<em>There are no scheduled lessons for this household.</em>
+	{% endif %}
+{% endblock %}

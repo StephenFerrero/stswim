@@ -1,0 +1,43 @@
+{% extends 'schedule/parent_manage.html' %}
+
+{% block title %}Sea Turtle Swim School Schedule Management System{% endblock %}
+{% block external %}<script src="/media/js/dynamic-formset.js" type="text/javascript"></script>{% endblock %}
+	
+	{% block manage_content %}
+	
+	<script type="text/javascript">
+	 $(function() {
+	        $(".datepicker").datepicker();
+	 });
+	</script>
+	
+	
+	<h2>Lesson Request</h2>
+	<p>Please use the following form to request lessons that are OPEN on the schedule.</p>
+	<p class="helper_text">- Add one line for each new lesson you would like to request.<br/>
+		- Pick the date and time and write names of ALL students attending including other parent's children.<br />
+		- Complete the notes field with any specific instructions or requests and note the names of other parents.</p>
+	<form action="" method="POST">{% csrf_token %}
+	    {{ request_lesson_formset.management_form }}
+	    
+		<table class="data">
+			<tr><th>Date</th><th>Time</th><th>Student(s) in lesson</th><th>Lesson Type</th></tr>
+			{% for form in request_lesson_formset.forms %}
+			<tr class="item">
+				<td>{{ form.date }}</td>
+				<td>{{ form.time }}</td>
+				<td>{{ form.students }}</td>
+				<td>{{ form.lesson_type }}</td>
+				<td><p style=""><a class="delete" href="#">Delete</a></p></td>
+			</tr>
+			{% endfor %}
+		</table>
+
+	    <p><a id="add" href="#">Add another lesson</a></p>
+	
+		{{ request_lesson_aux_form.as_p }}
+
+	    <input type="submit" value=" Submit " />
+
+	</form>
+	{% endblock %}

@@ -1,0 +1,52 @@
+*********************************
+TODO Items for STSWIM Project
+*********************************
+Mon = 0, Tue = 1, Wed = 2, Thu = 3, Fri = 4, Sat = 5, Sun = 6
+
+================================
+New Features
+================================
+- Create online registration form (email)
+  - Creates a parent record
+  - Emails new submission to Candace
+
+
+================================
+Bugs
+================================
+- Fix Day and Date in Student Lesson listing
+- Main links not clickable on certain browsers. (Remove Flash Text)
+- Make parent edit form update email address for associated user account.
+
+
+================================
+Improvements
+================================
+- Rework LessonSlot and Lesson detail page
+- Paginate Student and Parent listings
+- Paginate or Archive Student and Household lesson listings
+- Add Back to Household link to Student Detail page
+- Clean up form design across site
+- Clean up Calendar view ("Canceled" is too long causing line break)
+- Clean up logout process for management interface.
+- Create function to generate email in external client to verify lessons.
+
+
+
+================================
+*Maybe* Create Registration app to allow online registration. 
+		No payments just simple form to approval
+		Form will create a parent object with multiple child objects attached. Then submit a registration request for approval by Candace. 
+	
+		Should parents be able to create a user account so that they do not have to completely re-register every time? YES
+		What about parents of friends in class. Should an account be created for them? YES, but they request details.
+	
+	
+		Multi-Step Form
+			1. Gather Parent Details, and number of Children or option to sign up self for lessons
+			2. Gather information on each child, ask if registering parent is legal guardian, if not go to step 2B otherwise go to step 3.
+			2B. Gather correct Parent information for each non-parent child. Could be multiple children, should have option to match previous child some how
+			3. Auto generate the correct number of fields based on number of children. Gather information on schedule for each child,
+			4. Display summary and confirmation options, submit lessons for approval.
+			
+

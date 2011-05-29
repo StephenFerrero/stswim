@@ -1,0 +1,13 @@
+{% extends 'schedule/parent_manage.html' %}
+{% block title %}Registration Form{% endblock %}
+{% block col2 %}
+    <h1>Register</h1>
+	<p> Please fill out the following form in order to register yourself and your children.</p>
+    <form action="." method="POST">
+		{% csrf_token %}
+        <table>
+            {{ form.as_table }}
+        </table>
+        <p><input type="submit" value="Register"></p>
+    </form>
+{% endblock %}

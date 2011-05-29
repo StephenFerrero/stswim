@@ -1,0 +1,46 @@
+{% extends 'main2col.html' %}
+
+{% block title %}Sea Turtle Swim School Schedule Management System{% endblock %}
+
+{% block col1 %}	
+	<a href="{% url stswim.schedule.views.parentdashboard %}">Home</a><br /><br />
+	<h3>Tools:</h3>
+	<ul class="management_menu">
+		<li><a href="{% url parent_requestlesson  %}">Request Lessons</a></li>
+		<li><a href="{% url parent_registerstudent  %}">Register Student</a></li>
+		<li><a href="{% url view_currentseason  %}">View Calendar</a></li>
+	</ul>
+	{% if perms.schedule.can_addparent or perms.schedule.can_booklesson or perms.schedule.can_addlessonslot or perms.schedule.can_addseason %}
+		<h3>Tools</h3>
+		<ul class="management_menu">
+			{% if perms.schedule.can_addparent %}
+				<li><a href="{% url add_parent %}">Add Parent</a></li>
+			{% endif %}
+			{% if perms.schedule.can_booklesson %}
+				<li><a href="{% url add_lesson %}">Book Lesson</a></li>
+			{% endif %}
+			{% if perms.schedule.can_addlessonslot %}
+				<li><a href="{% url stswim.schedule.admin_views.addlessonslot %}">Add Lesson Slots</a></li>
+			{% endif %}	
+			{% if perms.schedule.can_addseason %}
+				<li><a href="{% url stswim.schedule.admin_views.addseason %}">Add Season</a></li>
+			{% endif %}
+		{% endif %}
+	
+{% endblock %}
+
+{% block col2 %}
+	<p class="floatright">
+		{% if user.is_authenticated %}
+			Hello {{ user.first_name }}! <a href="{% url logout %}">logout</a>
+		{% else %}
+			Please <a href="{% url login %}">Login</a>
+		{% endif %}
+	</p><br />
+	
+	{% block manage_content %}
+	
+	{% endblock %}
+
+	
+{% endblock %}
