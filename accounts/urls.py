@@ -14,14 +14,14 @@ urlpatterns = patterns('',
 	# [a-fA-F0-9]{40} because a bad activation key should still get to the view;
 	# that way it can return a sensible "invalid key" message instead of a
 	# confusing 404.
-	url(r'^activate/(?P<activation_key>\w+)/$', 'stswim.accounts.views.activate', name='registration_activate'),
+	#url(r'^activate/(?P<activation_key>\w+)/$', 'stswim.accounts.views.activate', name='registration_activate'),
 	
 	url(r'^password/change/$', password_change, name='auth_password_change'),
 	url(r'^password/change/done/$', password_change_done, name='auth_password_change_done'),
 	url(r'^password/reset/$', password_reset, name='auth_password_reset'),
 	url(r'^password/reset/done/$', password_reset_done, name='auth_password_reset_done'),
 		
-	url(r'^parent/register/$', 'stswim.accounts.views.registerparent', name='registration_parent'),
+	url(r'^parent/register/$', 'stswim.accounts.views.registerparent', name='register_parent'),
 	#(r'^employee/register/$', stswim.accounts.views.registeremployee),
 	
 	(r'^profile/$', 'stswim.accounts.views.UserProfile'),

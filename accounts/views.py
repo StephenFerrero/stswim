@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.http import HttpResponseRedirect, HttpResponse
 from stswim.accounts.forms import *
 
 # Create your views here.
@@ -44,10 +45,11 @@ def registerparent(request):
 		form = ParentRegistrationForm(request.POST)
 		if form.is_valid():
 			user = form.save()
-			return HttpResponseRedirect("/success/")
+			email = form.cleaned_data['email']
+			return render_to_response("registration/registration_success.html", {'email' : email}, context_instance=RequestContext(request))
 	else:
 		form = ParentRegistrationForm()	
-	return render_to_response("schedule/register.html", {'form' : form})
+	return render_to_response("schedule/parent_registration_form.html", {'form' : form})
 
 def UserProfile(request):
 	"""Basic view of any user account's profile."""

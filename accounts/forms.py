@@ -5,6 +5,7 @@ from stswim.utils import generate_id, random_string
 from stswim.schedule.models import Household, Parent
 from stswim.accounts.models import RegistrationProfile
 from datetime import date
+from django.core.mail import send_mail
 
 class ParentAddForm(forms.Form):
 	"""Form used by admins to add a parent object and corresponding user account"""
@@ -52,19 +53,15 @@ class ParentAddForm(forms.Form):
 		state = data['state']
 		zip_code = data['zip_code']
 		has_registrationform = data['has_registrationform']
-		#Disabling user creation at this time.
 		
-		#if email:
-			#username = generate_id(first_name, last_name)
-			#password = random_string(7, variable=False, charset='ALLCHAR')
+		if email:
+			username = email
+			password = random_string(7, variable=False, charset='ALLCHAR')
 			
-			
-			#new_user = RegistrationProfile.objects.create_inactive_user(
-			#		username, password, email, send_email=False, expires=False)
-					
-			#new_user.first_name = first_name
-			#new_user.last_name = last_name
-			#new_user.save()
+			new_user = User.objects.create_user(username, email, password)
+			new_user.first_name = first_name
+			new_user.last_name = last_name
+			new_user.save()
 		
 		#check if we are providing an existing household, if not create a new one, if so then attach new parent to that household.
 		if not self.household_id:
@@ -75,9 +72,8 @@ class ParentAddForm(forms.Form):
 			household = Household.objects.get(id=self.household_id)
 		
 		new_parent = Parent()
-		#Disabling user creation at this time
-		#if email:
-			#new_parent.user_id = new_user.id
+		if email:
+			new_parent.user_id = new_user.id
 		new_parent.household = household
 		new_parent.first_name = first_name
 		new_parent.last_name = last_name
@@ -99,29 +95,36 @@ class ParentEditForm(ModelForm):
 
 class ParentRegistrationForm(forms.Form):
 	"""The basic Parent registration form."""
-	first_name = forms.CharField(max_length=30)
-	last_name = forms.CharField(max_length=30)
+	email = forms.EmailField(label="Parent's Email", help_text='A valid e-mail address, please.')
+	email2 = forms.EmailField(label="Confirm Email")
 	password = forms.CharField(widget=forms.PasswordInput(render_value=False))
-	password2 = forms.CharField(widget=forms.PasswordInput(render_value=False), label="Password (again)")
-	email = forms.EmailField()
-	email2 = forms.EmailField(label="Email (again)")
+	password2 = forms.CharField(widget=forms.PasswordInput(render_value=False), label="Confirm Password")
+	first_name = forms.CharField(max_length=30, label="Parent's First Name")
+	last_name = forms.CharField(max_length=30, label="Parent's Last Name")
 	phone_number = forms.CharField(max_length=30)
 	address = forms.CharField(max_length=30)
-	address2 = forms.CharField(max_length=30)
+	address2 = forms.CharField(max_length=30, required=False)
 	city = forms.CharField(max_length=30)
 	state = forms.CharField(max_length=2)
 	zip_code = forms.CharField(max_length=30)
-	has_registration = forms.BooleanField(label="Has Registration Form", required=False)
 	
+	def clean_username(self):
+		"""Make sure username is not already in use"""
+		username = self.data['username']
+		if username and User.objects.filter(username=username).count() > 0:
+			raise forms.ValidationError('That username is already in use. Please choose another username.')
+			
+		return self.data['username']
+			
 	def clean_email(self):
-		"""Verify correct email address was enteres and
+		"""Verify correct email address was entered and
 		Prevent duplicate accounts by checking email address against existing users"""
 		if self.data['email'] != self.data['email2']:
 			raise forms.ValidationError("Email addresses do not match.")
 			
 		email = self.cleaned_data.get('email', None)
 		if email and User.objects.filter(email=email).count() > 0:
-			raise forms.ValidationError('That email address is already in use.')
+			raise forms.ValidationError('That email address is already in use. Please use the password recovery option for existing parents.')
 			
 		return self.data['email']
 		
@@ -132,14 +135,15 @@ class ParentRegistrationForm(forms.Form):
 		return self.data['password']
 		
 	def clean(self, *args, **kwargs):
+		self.clean_username()
 		self.clean_email()
 		self.clean_password()
 		return super(ParentRegistrationForm, self).clean(*args, **kwargs)
 		
 	def save(self):
 		"""Create a new user and parent. Returns the new user."""
-		
 		data = self.cleaned_data
+		username = data['email']
 		password = data['password']
 		email = data['email']
 		first_name = data['first_name']
@@ -151,16 +155,16 @@ class ParentRegistrationForm(forms.Form):
 		state = data['state']
 		zip_code = data['zip_code']
 		
-		username = generate_id(first_name, last_name)
-		
-		new_user = RegistrationProfile.objects.create_inactive_user(
-					username, password, email, send_email=False)
+		#new_user = RegistrationProfile.objects.create_inactive_user(username, password, email, send_email=True)
+		new_user = User.objects.create_user(username, email, password)
 					
 		new_user.first_name = first_name
 		new_user.last_name = last_name
 		new_user.save()
+		new_user.groups.add(2)
 		
 		new_household = Household()
+		new_household.creation_date = date.today()
 		new_household.save()
 		
 		new_parent = Parent()
@@ -168,6 +172,7 @@ class ParentRegistrationForm(forms.Form):
 		new_parent.household = new_household
 		new_parent.first_name = first_name
 		new_parent.last_name = last_name
+		new_parent.email = email
 		new_parent.phone_number = phone_number
 		new_parent.address = address
 		new_parent.address2 = address2
@@ -175,5 +180,16 @@ class ParentRegistrationForm(forms.Form):
 		new_parent.state = state
 		new_parent.zip_code = zip_code
 		new_parent.save()
+		
+		subject = render_to_string('registration/activation_email_subject.txt',)
+		# Email subject *must not* contain newlines
+		subject = ''.join(subject.splitlines())
+		
+		message = render_to_string('registration/activation_email.txt',
+								{ 'activation_key': registration_profile.activation_key,
+									'expires': expires,
+									'expiration_days': settings.ACCOUNT_ACTIVATION_DAYS,})
+		
+		send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [new_user.email])
 		
 		return new_user

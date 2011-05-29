@@ -17,6 +17,8 @@ urlpatterns += patterns('',
 		       #urls.py includes
 		       (r'^accounts/', include('stswim.accounts.urls')),
 		       (r'^schedule/', include('stswim.schedule.urls')),
+		
+			   (r'^login/$', 'stswim.schedule.views.regorlogin'),
 		       
 		       #Pages app admin urls
 		       (r'^admin/pages/page/$', 'stswim.pages.admin_views.list_pages'),
@@ -24,7 +26,7 @@ urlpatterns += patterns('',
 		       (r'^admin/pages/page/(?P<hnode_id>\d+)/down/$', 'stswim.pages.admin_views.down'),
 		       
 		       # Built-In Admin
-		       (r'^admin/(.*)', admin.site.root),
+		       (r'^admin/', include(admin.site.urls)),
 
 		       # Handle static files
 		       (r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': '/Users/stephen/Projects/stswim/media/'}),
@@ -32,6 +34,7 @@ urlpatterns += patterns('',
 		       #content pages
 		       #(r'^(?P<page_slug>\w+)/$', 'pages.views.details'),
 		       (r'^(?P<full_slug>(.*))/$', 'stswim.pages.views.details'),
+			   
 )
 
 

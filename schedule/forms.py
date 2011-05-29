@@ -13,6 +13,16 @@ class PersonSearchForm(forms.Form):
 		label='Enter a name to search for',
 		widget = forms.TextInput(attrs={'size': 20})
 	)
+	
+#allows parents to request lessons, needs to be dynamic.
+class RequestLessonForm(forms.Form):
+	date = forms.CharField(widget=forms.TextInput(attrs={'class':'datepicker','size':'10'}))
+	time = forms.CharField(widget=forms.TextInput(attrs={'size':'10'}))
+	students = forms.CharField(widget=forms.TextInput(attrs={'size':'30'}))
+	lesson_type = forms.ChoiceField(choices=LESSON_TYPES)
+
+class RequestLessonAuxForm(forms.Form):
+	notes = forms.CharField(widget=forms.Textarea(attrs={'size':'180'}))
 
 class StudentAddForm(forms.Form):
 
@@ -24,7 +34,8 @@ class StudentAddForm(forms.Form):
 	first_name = forms.CharField(max_length=40)
 	last_name = forms.CharField(max_length=40)
 	birth_date = forms.DateField()
-	sex = forms.ChoiceField(choices=SEX_CHOICES)
+	sex = forms.ChoiceField(choices=SEX_CHOICES, label="Gender")
+	#TODO: Only request liabilty form if Admin
 	has_liabilityform = forms.BooleanField(label="Has Liability Form", required=False)
 
 	def save(self):
@@ -34,6 +45,7 @@ class StudentAddForm(forms.Form):
 		new_student.last_name = self.cleaned_data['last_name']
 		new_student.sex = self.cleaned_data['sex']
 		new_student.birth_date = self.cleaned_data['birth_date']
+		#TODO: Only request liabilty form if Admin
 		new_student.has_liabilityform = self.cleaned_data['has_liabilityform']
 		new_student.save()
 		

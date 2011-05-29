@@ -416,6 +416,24 @@ table.detail td {
 	color: grey;
 }
 
+/** Parent Management Styles **/
+
+#new_parent {
+	border: 1px solid black;
+	padding: 20px;
+	height: 200px;
+	width: 280px;
+}
+
+#existing_parent {
+	border: 1px solid black;
+	padding: 20px;
+	height: 200px;
+	width: 280px;
+}
+
+/** Footer Styles **/
+
 .home #footer {
 	background: url("../img/home_footer_bg.png");
 	height: 50px;
@@ -477,6 +495,8 @@ table.detail td {
 	color: #4386c7;
 }
 
+/** Generic Classes **/
+
 .center {
 	margin: auto;
 }
@@ -503,6 +523,10 @@ table.detail td {
 
 .floatleft {
 	float: left;
+}
+
+.helper_text {
+	font-size: .8em;
 }
 
 .hidden {

@@ -6,7 +6,7 @@ Please complete the following next step to activate your SeaTurtle Swim School o
 	
 		http://www.seaturtleswim.com/accounts/activate/{{ activation_key }}
 
-{% if expires %}}
+{% if expires %}
 You have {{ expiration_days }} days until this activation key expires. If you still wish to activate
 after your key has expired, simply fill out the registration form again here:
 	
