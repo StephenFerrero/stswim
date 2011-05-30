@@ -1,0 +1,18 @@
+Hello,
+
+Thank you for registering on SeaTurtleSwim.com
+
+Your new account can be used to register your children as student and to request lessons.
+
+You can login to your new account here:
+
+www.seaturtleswim.com/schedule/register
+
+Your username is:
+
+{{ email }}
+
+And your password is:
+
+{{ password }}
+	
