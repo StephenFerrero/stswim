@@ -49,7 +49,7 @@ def registerparent(request):
 			return render_to_response("registration/registration_success.html", {'email' : email}, context_instance=RequestContext(request))
 	else:
 		form = ParentRegistrationForm()	
-	return render_to_response("schedule/parent_registration_form.html", {'form' : form})
+	return render_to_response("schedule/parent_registration_form.html", {'form' : form}, context_instance=RequestContext(request))
 
 def UserProfile(request):
 	"""Basic view of any user account's profile."""

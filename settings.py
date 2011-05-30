@@ -82,6 +82,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.middleware.doc.XViewMiddleware',
+	'django.contrib.sessions.middleware.SessionMiddleware',
+	'django.contrib.messages.middleware.MessageMiddleware'
 )
 
 ROOT_URLCONF = 'stswim.urls'
@@ -97,12 +99,17 @@ INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
+	'django.contrib.messages',
     #'django.contrib.sites',
     'django.contrib.admin',
     'stswim.schedule',
     'stswim.pages',
     'stswim.accounts',
 )
+
+AUTHENTICATION_BACKENDS = (
+    'stswim.accounts.email_auth.EmailBackend',
+ )
 
 LOGIN_URL = '/schedule/register/'
 ACCOUNT_ACTIVATION_DAYS = 14

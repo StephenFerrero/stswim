@@ -1,11 +1,13 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.forms.formsets import formset_factory, BaseFormSet
 from django.shortcuts import render_to_response, redirect
 from django.views.generic.simple import direct_to_template
 from django.template import RequestContext
 from django.contrib.auth import authenticate, login
 from stswim.schedule.models import Season, Parent, Student, Lesson, LessonSlot
+from stswim.utils import random_string
 from forms import *
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
@@ -52,9 +54,11 @@ def requestlesson(request):
 			management_email = ['stephenferrero@gmail.com']
 			
 			send_mail(subject2, message2, settings.DEFAULT_FROM_EMAIL, management_email)
- 
-			return HttpResponseRedirect('/lessons') #TODO Redirect to a 'success' page
+ 			
+			messages.success(request, 'You have successfully requested lessons, you may request more below.')
+			return redirect('/schedule/parentdashboard')
 		else:
+			messages.error(request, 'Lesson request failed.')
 			return HttpResponseRedirect('/fail') #TODO Failure
 	else:
 		request_lesson_form = RequestLessonForm()
@@ -67,31 +71,62 @@ def requestlesson(request):
  
 	return render_to_response('schedule/parent_requestlesson.html', c, context_instance=RequestContext(request))
 
+#Registration or login page for parents
+#TODO Should be consolidated into Accounts App
 def regorlogin(request):
 	if request.POST:
-		username = request.POST['username']
+		email = request.POST['email']
 		password = request.POST['password']
-		user = authenticate(username=username, password=password)
+
+		user = authenticate(username=email, password=password)
+
 		if user is not None:
 			if user.is_active:
 				login(request, user)
 				return redirect("parent_dashboard")
 			else:
-				return direct_to_template(request, 'inactive_account.html')
+				messages.error(request, 'Account is disabled please call 1-888-855-SWIM')
+				return redirect(regorlogin)
 		else:
-			return direct_to_template(request, 'inactive_account.html')
+			messages.error(request, 'Account login invalid')
+			return redirect(regorlogin)
 			
 	#Check if user is already logged in, if so send to Parent Dashboard. Otherwise send to Login page.	
 	if not request.user.is_authenticated():
 		return render_to_response('schedule/regorlogin.html', context_instance=RequestContext(request))
 	else:
 		return HttpResponseRedirect('/schedule/parentdashboard/')
+
+#Parent reset password form
+#TODO should be consolidated into Accounts App		
+def parentresetpassword(request):
+	if request.POST:
+		email = request.POST['email']
+
+		try:
+			parent = Parent.objects.get(email=email)
+			user = parent.user
+			new_pass = random_string(5)
+			user.set_password(new_pass)
+			user.email = parent.email
+			user.save()
+			subject2 = 'Password Reminder'
+			message2 = render_to_string('email/password_reminder.txt',
+										{ 'new_pass': new_pass })
+
+			user.email_user(subject2, message2, settings.DEFAULT_FROM_EMAIL)
+			messages.success(request, 'Your password has been reset and emailed to you.')
+			
+			return HttpResponseRedirect('/schedule/parentdashboard/')
+			
+		except:
+			messages.error(request, 'A user account with that email address could not be found. Please call 1-855-888-SWIM')
+			return redirect('/schedule/parentdashboard')
+	else:
+		return render_to_response('schedule/parent_reset_password.html', context_instance=RequestContext(request))
 	
 @login_required
 def parentdashboard(request, parent_id=None):
-#	if not 1 in request.user.groups.all():
-#		return HttpResponseRedirect('/accounts/login/?next=/schedule/parentdashboard')
-#	else:
 		user_id = request.user.id
 		parent = Parent.objects.get(user = user_id)
 		students = Student.objects.filter(household__exact = parent.household)
@@ -106,7 +141,7 @@ def parentdashboard(request, parent_id=None):
 	
 		return render_to_response("schedule/parent_dashboard.html", variables,
 						  context_instance=RequestContext(request))
-
+						
 @login_required
 def parentregisterstudent(request):
 # Allows parents to register students
@@ -114,15 +149,16 @@ def parentregisterstudent(request):
 	parent = Parent.objects.get(user = user_id)
 	
 	if request.method == 'POST':
-		form = StudentAddForm(parent.household, request.POST)
+		form = StudentAddForm(parent.household_id, request.POST)
 		if form.is_valid():
-			user = form.save()
-			email = form.cleaned_data['email']
-			message = "Successfully registered student(s)"
-			return render_to_response("schedule/parent_dashboard.html", {'message' : message}, context_instance=RequestContext(request))
+			form.save()
+			messages.success(request, 'You have sucessfuly registered your student. You can register another below.')
+			return redirect('/schedule/parentdashboard')
+		else:
+			return HttpResponseRedirect('/fail') #TODO Failure
 	else:
-		form = StudentAddForm(parent.household.id)	
-	return render_to_response("schedule/parent_registration_form.html", {'form' : form})
+		form = StudentAddForm(parent.household_id)	
+	return render_to_response("schedule/parent_registration_form.html", {'form' : form}, context_instance=RequestContext(request))
 
 def viewseason(request, season_id=None, display_month=None):
 	if not season_id:

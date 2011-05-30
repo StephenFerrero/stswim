@@ -19,14 +19,16 @@
 			{% if next %}
 			<input type="hidden" name="next" value="{{ next }}" />
 			{% endif %}
-			username:
-			<input type="text" name="username" value="{{ username}}" /><br />
+			email:
+			<input type="text" name="email" value="{{ email }}" /><br />
 			password:
 			<input type="password" name="password" value="" /><br />
 
 			<input type="submit" value="Log In" />
 		</form>
-		<p class="helper_text">If you do not have a password please login with only your email address. Your password will be mailed to you.</p>
+		<br />
+		<h4>Password problems?</h4>
+		<p class="helper_text">If you do not have a password or have forgotten it please <a href="/schedule/resetpass">Click Here</a></p>
 	</div>
 	
 	{% block manage_content %}

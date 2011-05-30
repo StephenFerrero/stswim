@@ -4,8 +4,7 @@
 {% block manage_content %}
 	<h2>{{ form_title }}</h2>
 	<p>{{ form_instructions }}</p>
-	<form action="." method="POST">
-		{% csrf_token %}
+	<form action="." method="POST">{% csrf_token %}
         <table>
             {{ form.as_table }}
         </table>

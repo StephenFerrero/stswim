@@ -6,7 +6,9 @@ We have received your request for the following lessons:
 {% for lesson in data %}
 {{ lesson.date }} - {{ lesson.time }} - {{ lesson.students }} - {{ lesson.lesson_type }}
 {% endfor %}
-	
+
+Note:
+
 {{ note }}
 
 	

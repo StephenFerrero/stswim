@@ -43,6 +43,7 @@ urlpatterns = patterns('',
 	url(r'^student/(?P<student_id>\d+)/edit/$', 'stswim.schedule.admin_views.editstudent', name='edit_student'),
 	
 	url(r'^register/$', 'stswim.schedule.views.regorlogin', name='regorlogin'),
+	url(r'^resetpass/$', 'stswim.schedule.views.parentresetpassword', name='parent_resetpassword'),
 	url(r'^parentdashboard/$', 'stswim.schedule.views.parentdashboard', name='parent_dashboard'),
 	url(r'^parentdashboard/addstudent$', 'stswim.schedule.views.parentregisterstudent', name='parent_registerstudent'),
 	url(r'^parentdashboard/requestlesson$', 'stswim.schedule.views.requestlesson', name='parent_requestlesson'),

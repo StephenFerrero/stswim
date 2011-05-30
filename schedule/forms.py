@@ -14,8 +14,8 @@ class PersonSearchForm(forms.Form):
 		widget = forms.TextInput(attrs={'size': 20})
 	)
 	
-#allows parents to request lessons, needs to be dynamic.
 class RequestLessonForm(forms.Form):
+	#Allows parents to request lessons
 	date = forms.CharField(widget=forms.TextInput(attrs={'class':'datepicker','size':'10'}))
 	time = forms.CharField(widget=forms.TextInput(attrs={'size':'10'}))
 	students = forms.CharField(widget=forms.TextInput(attrs={'size':'30'}))
@@ -25,7 +25,7 @@ class RequestLessonAuxForm(forms.Form):
 	notes = forms.CharField(widget=forms.Textarea(attrs={'size':'180'}))
 
 class StudentAddForm(forms.Form):
-
+	#Forms takes Household ID to properly assign to new student
 	def __init__(self, household_id, *args, **kwargs):
 		super(StudentAddForm, self).__init__(*args, **kwargs)
 
@@ -33,7 +33,7 @@ class StudentAddForm(forms.Form):
 
 	first_name = forms.CharField(max_length=40)
 	last_name = forms.CharField(max_length=40)
-	birth_date = forms.DateField()
+	birth_date = forms.DateField(help_text='MM/DD/YYYY')
 	sex = forms.ChoiceField(choices=SEX_CHOICES, label="Gender")
 	#TODO: Only request liabilty form if Admin
 	has_liabilityform = forms.BooleanField(label="Has Liability Form", required=False)
@@ -55,6 +55,7 @@ class StudentEditForm(ModelForm):
 	class Meta:
 		model = Student
 
+#TODO Need better selection here, maybe autocomplete instead of lisitng all students
 class AddStudentToLessonForm(forms.Form):
 	students = forms.ModelMultipleChoiceField(Student.objects.all())
 	

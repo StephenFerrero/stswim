@@ -10,6 +10,9 @@ New Features
   - Creates a parent record
   - Emails new submission to Candace
 
+- Billing
+
+
 
 ================================
 Bugs
@@ -17,11 +20,20 @@ Bugs
 - Fix Day and Date in Student Lesson listing
 - Main links not clickable on certain browsers. (Remove Flash Text)
 - Make parent edit form update email address for associated user account.
+- Add Gender to Student Detail view
+- Day and Date not showing for lessons on Student Detail page
 
 
 ================================
 Improvements
 ================================
+- Cancelled lessons should allow re-open LessonSlot
+- On parent dashboard show only current season's lessons. Separate by month.
+- Note system, Notes should be available for Students, Parents, Lessons, Etc. Public and Private...
+- Add secondary phone number for Parents
+- Consolidate all user account logic into Accounts app
+- Remove separation of employee and parent login
+- Allow adult students to login and register themselves
 - Rework LessonSlot and Lesson detail page
 - Paginate Student and Parent listings
 - Paginate or Archive Student and Household lesson listings
@@ -30,23 +42,15 @@ Improvements
 - Clean up Calendar view ("Canceled" is too long causing line break)
 - Clean up logout process for management interface.
 - Create function to generate email in external client to verify lessons.
-
-
+- Implement a better student selection wizard during book lessons (Autocomplete?)
 
 ================================
-*Maybe* Create Registration app to allow online registration. 
-		No payments just simple form to approval
-		Form will create a parent object with multiple child objects attached. Then submit a registration request for approval by Candace. 
+Current Projects
+================================
+*Parent Registration*
+- Add buttons for Parent Dashboard instead of sidebar links
+- Fix form validation on Lesson Request form (Ignore empty lesson lines, allow empty notes section)
+- Allow parent to specify notes when registering each student
+- Emergency Contact
 	
-		Should parents be able to create a user account so that they do not have to completely re-register every time? YES
-		What about parents of friends in class. Should an account be created for them? YES, but they request details.
-	
-	
-		Multi-Step Form
-			1. Gather Parent Details, and number of Children or option to sign up self for lessons
-			2. Gather information on each child, ask if registering parent is legal guardian, if not go to step 2B otherwise go to step 3.
-			2B. Gather correct Parent information for each non-parent child. Could be multiple children, should have option to match previous child some how
-			3. Auto generate the correct number of fields based on number of children. Gather information on schedule for each child,
-			4. Display summary and confirmation options, submit lessons for approval.
-			
 

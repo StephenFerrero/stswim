@@ -6,6 +6,7 @@ from stswim.schedule.models import Household, Parent
 from stswim.accounts.models import RegistrationProfile
 from datetime import date
 from django.core.mail import send_mail
+from django.template.loader import render_to_string
 
 class ParentAddForm(forms.Form):
 	"""Form used by admins to add a parent object and corresponding user account"""
@@ -107,14 +108,6 @@ class ParentRegistrationForm(forms.Form):
 	city = forms.CharField(max_length=30)
 	state = forms.CharField(max_length=2)
 	zip_code = forms.CharField(max_length=30)
-	
-	def clean_username(self):
-		"""Make sure username is not already in use"""
-		username = self.data['username']
-		if username and User.objects.filter(username=username).count() > 0:
-			raise forms.ValidationError('That username is already in use. Please choose another username.')
-			
-		return self.data['username']
 			
 	def clean_email(self):
 		"""Verify correct email address was entered and
@@ -135,7 +128,6 @@ class ParentRegistrationForm(forms.Form):
 		return self.data['password']
 		
 	def clean(self, *args, **kwargs):
-		self.clean_username()
 		self.clean_email()
 		self.clean_password()
 		return super(ParentRegistrationForm, self).clean(*args, **kwargs)
@@ -143,7 +135,6 @@ class ParentRegistrationForm(forms.Form):
 	def save(self):
 		"""Create a new user and parent. Returns the new user."""
 		data = self.cleaned_data
-		username = data['email']
 		password = data['password']
 		email = data['email']
 		first_name = data['first_name']
@@ -154,6 +145,8 @@ class ParentRegistrationForm(forms.Form):
 		city = data['city']
 		state = data['state']
 		zip_code = data['zip_code']
+		
+		username = generate_id(first_name, last_name)
 		
 		#new_user = RegistrationProfile.objects.create_inactive_user(username, password, email, send_email=True)
 		new_user = User.objects.create_user(username, email, password)
@@ -181,15 +174,13 @@ class ParentRegistrationForm(forms.Form):
 		new_parent.zip_code = zip_code
 		new_parent.save()
 		
-		subject = render_to_string('registration/activation_email_subject.txt',)
-		# Email subject *must not* contain newlines
-		subject = ''.join(subject.splitlines())
+		subject = 'Seaturtle Swim School Online Registration'
 		
-		message = render_to_string('registration/activation_email.txt',
-								{ 'activation_key': registration_profile.activation_key,
-									'expires': expires,
-									'expiration_days': settings.ACCOUNT_ACTIVATION_DAYS,})
+		message = render_to_string('registration/new_account_confirmation.txt',
+								{ 'email': email,
+									'password': password,
+									})
 		
-		send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [new_user.email])
+		send_mail(subject, message, 'website@seaturtleswim.com', [new_user.email])
 		
 		return new_user
