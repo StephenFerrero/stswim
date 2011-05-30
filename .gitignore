@@ -6,3 +6,4 @@
 # *~
 
 *.pyc # Will exclude compiled Python files
+settings.py
