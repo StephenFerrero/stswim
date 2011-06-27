@@ -424,7 +424,7 @@ table.detail td {
 .calendar_lesson_booked {
 	text-transform:uppercase;
 	color: grey;
-	font-size: .9em;
+	font-size: .8em;
 }
 
 /** Parent Management Styles **/
