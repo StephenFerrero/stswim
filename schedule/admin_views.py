@@ -15,7 +15,6 @@ from stswim.accounts.forms import ParentEditForm
 
 @permission_required('schedule.can_viewfullschedule')
 def manageschedule(request):
-	#TODO: Get today's lessons based on logged in user, or default to all lessons
 	today = date.today()
 	todayslessonslots = LessonSlot.objects.filter(start_datetime__year = today.year, start_datetime__month = today.month,
 													start_datetime__day = today.day, status__exact = 'Booked')

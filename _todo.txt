@@ -28,7 +28,7 @@ Improvements
 - Note system, Notes should be available for Students, Parents, Lessons, Etc. Public and Private...
 - Add secondary phone number for Parents
 - Consolidate all user account logic into Accounts app
-- Remove separation of employee and parent login
+- Remove separation of employee and parent login?
 - Allow adult students to login and register themselves
 - Rework LessonSlot and Lesson detail page
 - Paginate Student and Parent listings

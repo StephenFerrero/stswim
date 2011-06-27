@@ -84,7 +84,10 @@ def regorlogin(request):
 		if user is not None:
 			if user.is_active:
 				login(request, user)
-				return redirect("parent_dashboard")
+				if user.groups.filter(name='Instructor').count() == 1:
+					return redirect("manage_schedule")
+				else:
+					return redirect("parent_dashboard")
 			else:
 				messages.error(request, 'Account is disabled please call 1-888-855-SWIM')
 				return redirect(regorlogin)
@@ -96,7 +99,10 @@ def regorlogin(request):
 	if not request.user.is_authenticated():
 		return render_to_response('schedule/regorlogin.html', context_instance=RequestContext(request))
 	else:
-		return HttpResponseRedirect('/schedule/parentdashboard/')
+		if request.user.groups.filter(name='Instructor').count() == 1:
+			return HttpResponseRedirect('/manage')
+		else:
+			return HttpResponseRedirect('/schedule/parentdashboard/')
 
 #Parent reset password form
 #TODO should be consolidated into Accounts App		

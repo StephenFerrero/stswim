@@ -114,7 +114,7 @@ class Season(models.Model):
     class Meta:
         ordering = ['start_date']
         permissions = (
-                ("can_viewfullschedule", "Can view entire schedule"),
+                ("can_viewfullschedule", "Can view full schedule"),
                 )
 
 class Lesson(models.Model):
