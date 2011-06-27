@@ -154,7 +154,7 @@ class ParentRegistrationForm(forms.Form):
 		new_user.first_name = first_name
 		new_user.last_name = last_name
 		new_user.save()
-		new_user.groups.add(2)
+		#new_user.groups.add(2)
 		
 		new_household = Household()
 		new_household.creation_date = date.today()
