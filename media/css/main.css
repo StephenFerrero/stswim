@@ -431,6 +431,7 @@ table.detail td {
 #new_parent {
 	border: 1px solid black;
 	padding: 20px;
+	margin-right: 20px;
 	height: 200px;
 	width: 280px;
 }
@@ -506,6 +507,28 @@ table.detail td {
 }
 
 /** Generic Classes **/
+
+ul.messages {
+	padding: 10px 0 5px 0;
+	margin: auto;
+	width: 850px;
+}
+ul.messages li {
+	margin: 5px 0 5px 0;
+	padding: 5px;
+	border: 1px solid black;
+}
+li.error {
+	background-color: red;
+	color: white;
+}
+li.warning {
+	background-color: yellow;
+}
+li.success {
+	background-color: green;
+	color: white;
+}
 
 .center {
 	margin: auto;

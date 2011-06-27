@@ -36,7 +36,7 @@ class StudentAddForm(forms.Form):
 	birth_date = forms.DateField(help_text='MM/DD/YYYY')
 	sex = forms.ChoiceField(choices=SEX_CHOICES, label="Gender")
 	#TODO: Only request liabilty form if Admin
-	has_liabilityform = forms.BooleanField(label="Has Liability Form", required=False)
+	has_liabilityform = forms.BooleanField(label="Has Liability Form", required=False, widget=forms.Select(attrs={'disabled':'disabled'}))
 
 	def save(self):
 		new_student = Student()
