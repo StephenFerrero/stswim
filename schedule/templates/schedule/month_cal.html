@@ -12,7 +12,7 @@
 	<span class="instructor_candace">Teacher Candace</span><br />
 	<span class="instructor_victoria">Teacher Victoria</span><br />
 	<span class="instructor_pamela">Teacher Pamela</span><br />
-	<span class="instructor_jackie">Teacher Jackie</span>
+	<span class="instructor_jackie">Teacher Melissa</span>
 </div>
 	
 <table class="season_month_cal">
@@ -43,7 +43,7 @@
 					{% else %}
 						<span class="{% ifequal lesson.instructor.first_name "Victoria" %}instructor_victoria{% endifequal %}
 							{% ifequal lesson.instructor.first_name "Pamela" %}instructor_pamela{% endifequal %}
-							{% ifequal lesson.instructor.first_name "Jackie" %}instructor_jackie{% endifequal %}
+							{% ifequal lesson.instructor.first_name "Melissa" %}instructor_melissa{% endifequal %}
 							{% ifequal lesson.instructor.first_name "Candace" %}instructor_candace{% endifequal %}">
 					{% endifequal %}
 						{{ lesson.start_datetime|time:"g:i A" }} -</span>

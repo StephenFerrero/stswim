@@ -52,8 +52,5 @@ Current Projects
 - Add buttons for Parent Dashboard instead of sidebar links
 - Allow parent to specify notes when registering each student
 - Emergency Contact
-- Style Django messages
-- Time entry on lesson request helper
-- 
 - Cleanup logout function	
 
