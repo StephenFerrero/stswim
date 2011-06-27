@@ -84,7 +84,7 @@ def regorlogin(request):
 		if user is not None:
 			if user.is_active:
 				login(request, user)
-				if user.groups.filter(name='Instructor').count() == 1:
+				if user.groups.filter(name='Instructors').count() == 1:
 					return redirect("manage_schedule")
 				else:
 					return redirect("parent_dashboard")
@@ -99,7 +99,7 @@ def regorlogin(request):
 	if not request.user.is_authenticated():
 		return render_to_response('schedule/regorlogin.html', context_instance=RequestContext(request))
 	else:
-		if request.user.groups.filter(name='Instructor').count() == 1:
+		if request.user.groups.filter(name='Instructors').count() == 1:
 			return HttpResponseRedirect('/manage')
 		else:
 			return HttpResponseRedirect('/schedule/parentdashboard/')
