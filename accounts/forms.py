@@ -74,7 +74,7 @@ class ParentAddForm(forms.Form):
 		
 		new_parent = Parent()
 		if email:
-			new_parent.user_id = new_user.id
+		new_parent.user_id = new_user.id
 		new_parent.household = household
 		new_parent.first_name = first_name
 		new_parent.last_name = last_name

@@ -122,8 +122,11 @@ def parentresetpassword(request):
 				new_user.first_name = first_name
 				new_user.last_name = last_name
 				new_user.save()
-				new_user.groups.add(2)
 				user = new_user
+				
+				parent.user = user
+				parent.save()
+
 			
 			subject2 = 'Password Reminder'
 			message2 = render_to_string('email/password_reminder.txt',
