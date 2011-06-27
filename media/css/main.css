@@ -130,12 +130,6 @@ td.error {
 
 #navbar li {
 	position: relative;
-	list-style: none;
-}
-
-.sIFR-active #navbar li {
-	background: url("../img/button.png") no-repeat;
-	position: relative;
 	float: left;
 	height: 100px;
 	width: 105px;
@@ -157,13 +151,7 @@ td.error {
 	font-weight: 600;
 }
 
-.sIFR-active #navbar a{
-	visibility: hidden;
-	font-family: Verdana;
-	line-height: 1em;
-}
-
-.sIFR-active #navbar li:hover {
+#navbar li:hover {
 	background-position: 0 -105px;
 }
 

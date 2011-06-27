@@ -23,7 +23,7 @@ sIFR.replace(babel, {
    
 });
 
-sIFR.replace(hasty, {
+/*sIFR.replace(hasty, {
   selector: '#navbar li'
   ,css: [
       '.sIFR-root { font-size: 18; text-align: center;}'
@@ -37,3 +37,4 @@ sIFR.replace(hasty, {
   ,offsetTop: 35
   ,forceWidth: 45
 });
+*/
