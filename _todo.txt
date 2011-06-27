@@ -53,6 +53,7 @@ Current Projects
 - Allow parent to specify notes when registering each student
 - Emergency Contact
 - Style Django messages
-- If parent has no user account, create one for them during password reset attempt.
+- Time entry on lesson request helper
+- 
 - Cleanup logout function	
 
