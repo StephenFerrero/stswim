@@ -6,10 +6,6 @@ Mon = 0, Tue = 1, Wed = 2, Thu = 3, Fri = 4, Sat = 5, Sun = 6
 ================================
 New Features
 ================================
-- Create online registration form (email)
-  - Creates a parent record
-  - Emails new submission to Candace
-
 - Billing
  - Running Balance Due = Lessons - Payments
  - Report of Statement able to email to parents (possibly PDF?)
@@ -19,7 +15,6 @@ New Features
 Bugs
 ================================
 - Fix Day and Date in Student Lesson listing
-- Main links not clickable on certain browsers. (Remove Flash Text)
 - Make parent edit form update email address for associated user account.
 - Add Gender to Student Detail view
 - Day and Date not showing for lessons on Student Detail page
@@ -40,7 +35,6 @@ Improvements
 - Paginate or Archive Student and Household lesson listings
 - Add Back to Household link to Student Detail page
 - Clean up form design across site
-- Clean up Calendar view ("Canceled" is too long causing line break)
 - Clean up logout process for management interface.
 - Create function to generate email in external client to verify lessons.
 - Implement a better student selection wizard during book lessons (Autocomplete?)
