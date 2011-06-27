@@ -52,7 +52,7 @@ def requestlesson(request):
 			subject2 = 'New Lesson Request'
 			message2 = render_to_string('email/lesson_request_email_management.txt',
 										{ 'data': data, 'note': note, 'parent': parent})
-			management_email = ['stephenferrero@gmail.com']
+			management_email = ['candace@seaturtleswim.com']
 			
 			send_mail(subject2, message2, settings.DEFAULT_FROM_EMAIL, management_email)
  			

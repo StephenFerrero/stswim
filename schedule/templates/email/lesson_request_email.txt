@@ -11,6 +11,7 @@ Note:
 
 {{ note }}
 
+This is not a confirmation of lessons. Your requested lessons are currently pending until you receive confirmation.
 	
 Thank You for choosing Sea Turtle Swim School!
 

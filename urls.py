@@ -17,6 +17,7 @@ urlpatterns += patterns('',
 		       #urls.py includes
 		       (r'^accounts/', include('stswim.accounts.urls')),
 		       (r'^schedule/', include('stswim.schedule.urls')),
+			   (r'^register/$', 'stswim.schedule.views.regorlogin'),
 		
 			   (r'^login/$', 'stswim.schedule.views.regorlogin'),
 		       
