@@ -1,13 +1,14 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login
 from django.forms.formsets import formset_factory, BaseFormSet
 from django.shortcuts import render_to_response, redirect
 from django.views.generic.simple import direct_to_template
 from django.template import RequestContext
-from django.contrib.auth import authenticate, login
 from stswim.schedule.models import Season, Parent, Student, Lesson, LessonSlot
-from stswim.utils import random_string
+from stswim.utils import random_string, generate_id
 from forms import *
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
@@ -102,21 +103,35 @@ def regorlogin(request):
 def parentresetpassword(request):
 	if request.POST:
 		email = request.POST['email']
-
+		
 		try:
 			parent = Parent.objects.get(email=email)
-			user = parent.user
-			new_pass = random_string(5)
-			user.set_password(new_pass)
-			user.email = parent.email
-			user.save()
+			if parent.user is not None:
+				user = parent.user
+				new_pass = random_string(5)
+				user.set_password(new_pass)
+				user.email = parent.email
+				user.save()
+			
+			else:
+				first_name = parent.first_name
+				last_name = parent.last_name
+				username = generate_id(first_name, last_name)
+				new_pass = random_string(5)
+				new_user = User.objects.create_user(username, email, new_pass)
+				new_user.first_name = first_name
+				new_user.last_name = last_name
+				new_user.save()
+				new_user.groups.add(2)
+				user = new_user
+			
 			subject2 = 'Password Reminder'
 			message2 = render_to_string('email/password_reminder.txt',
-										{ 'new_pass': new_pass })
+									{ 'new_pass': new_pass })
 
 			user.email_user(subject2, message2, settings.DEFAULT_FROM_EMAIL)
 			messages.success(request, 'Your password has been reset and emailed to you.')
-			
+		
 			return HttpResponseRedirect('/schedule/parentdashboard/')
 			
 		except:

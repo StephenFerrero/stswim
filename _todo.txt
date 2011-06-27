@@ -11,7 +11,8 @@ New Features
   - Emails new submission to Candace
 
 - Billing
-
+ - Running Balance Due = Lessons - Payments
+ - Report of Statement able to email to parents (possibly PDF?)
 
 
 ================================
@@ -49,8 +50,9 @@ Current Projects
 ================================
 *Parent Registration*
 - Add buttons for Parent Dashboard instead of sidebar links
-- Fix form validation on Lesson Request form (Ignore empty lesson lines, allow empty notes section)
 - Allow parent to specify notes when registering each student
 - Emergency Contact
-	
+- Style Django messages
+- If parent has no user account, create one for them during password reset attempt.
+- Cleanup logout function	
 

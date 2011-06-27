@@ -16,13 +16,13 @@ class PersonSearchForm(forms.Form):
 	
 class RequestLessonForm(forms.Form):
 	#Allows parents to request lessons
-	date = forms.CharField(widget=forms.TextInput(attrs={'class':'datepicker','size':'10'}))
-	time = forms.CharField(widget=forms.TextInput(attrs={'size':'10'}))
-	students = forms.CharField(widget=forms.TextInput(attrs={'size':'30'}))
-	lesson_type = forms.ChoiceField(choices=LESSON_TYPES)
+	date = forms.CharField(required=False, widget=forms.TextInput(attrs={'class':'datepicker','size':'10'}))
+	time = forms.CharField(required=False, widget=forms.TextInput(attrs={'size':'10'}))
+	students = forms.CharField(required=False, widget=forms.TextInput(attrs={'size':'30'}))
+	lesson_type = forms.ChoiceField(required=False, choices=LESSON_TYPES)
 
 class RequestLessonAuxForm(forms.Form):
-	notes = forms.CharField(widget=forms.Textarea(attrs={'size':'180'}))
+	notes = forms.CharField(required=False, widget=forms.Textarea(attrs={'size':'180'}))
 
 class StudentAddForm(forms.Form):
 	#Forms takes Household ID to properly assign to new student
