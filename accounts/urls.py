@@ -8,7 +8,7 @@ from stswim.accounts.views import activate, registerparent
 
 urlpatterns = patterns('',
 	url(r'^login/$',  login, name="login"),
-	url(r'^logout/$', logout, name="logout"),
+	url(r'^logout/$', 'stswim.accounts.views.logout_view', name="logout"),
 	
 	# Activation keys get matched by \w+ instead of the more specific
 	# [a-fA-F0-9]{40} because a bad activation key should still get to the view;

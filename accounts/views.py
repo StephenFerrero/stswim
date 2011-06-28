@@ -3,8 +3,15 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.http import HttpResponseRedirect, HttpResponse
 from stswim.accounts.forms import *
+from django.contrib.auth import logout
+from django.contrib import messages
 
 # Create your views here.
+
+def logout_view(request):
+    logout(request)
+    messages.success(request, 'You have successfully logged out.')
+    return HttpResponseRedirect('/register')
 
 def activate(request, activation_key, template_name='registration/activate.html'):
     """

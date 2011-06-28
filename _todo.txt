@@ -18,6 +18,7 @@ Bugs
 - Make parent edit form update email address for associated user account.
 - Add Gender to Student Detail view
 - Day and Date not showing for lessons on Student Detail page
+- Remove blank space for non-existent Address line 2 in Management dashboard
 
 
 ================================
@@ -46,5 +47,4 @@ Current Projects
 - Add buttons for Parent Dashboard instead of sidebar links
 - Allow parent to specify notes when registering each student
 - Emergency Contact
-- Cleanup logout function	
 

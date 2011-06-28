@@ -20,6 +20,7 @@ urlpatterns += patterns('',
 			   (r'^register/$', 'stswim.schedule.views.regorlogin'),
 		
 			   (r'^login/$', 'stswim.schedule.views.regorlogin'),
+			   (r'^logout/$', 'stswim.accounts.views.logout_view'),
 		       
 		       #Pages app admin urls
 		       (r'^admin/pages/page/$', 'stswim.pages.admin_views.list_pages'),
