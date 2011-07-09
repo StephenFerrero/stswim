@@ -25,6 +25,10 @@ LESSONSLOT_STATUS = (
 LESSON_STATUS = (
     ('Booked', 'Booked'),
     ('Open', 'Open'),
+	('No Show', 'No Show'),
+	('Missed', 'Missed'),
+	('Make Up', 'Make Up'),
+	('Late', 'Late'),
     ('Pending', 'Pending'),
     ('Cancelled', 'Cancelled'),
 )
