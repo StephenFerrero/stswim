@@ -157,23 +157,28 @@ class ParentRegistrationForm(forms.Form):
 		new_user.save()
 		#new_user.groups.add(2)
 		
-		new_household = Household()
-		new_household.creation_date = date.today()
-		new_household.save()
 		
-		new_parent = Parent()
+		
+		if Parent.objects.filter(email=email).count() < 0:
+			new_parent = Parent()
+			new_household = Household()
+			new_household.creation_date = date.today()
+			new_household.save()
+			new_parent.household = new_household
+			new_parent.first_name = first_name
+			new_parent.last_name = last_name
+			new_parent.email = email
+			new_parent.phone_number = phone_number
+			new_parent.address = address
+			new_parent.address2 = address2
+			new_parent.city = city
+			new_parent.state = state
+			new_parent.zip_code = zip_code
+			new_parent.save()
+		else:
+			new_parent = Parent.objects.filter(email=email)
+			
 		new_parent.user_id = new_user.id
-		new_parent.household = new_household
-		new_parent.first_name = first_name
-		new_parent.last_name = last_name
-		new_parent.email = email
-		new_parent.phone_number = phone_number
-		new_parent.address = address
-		new_parent.address2 = address2
-		new_parent.city = city
-		new_parent.state = state
-		new_parent.zip_code = zip_code
-		new_parent.save()
 		
 		subject = 'Seaturtle Swim School Online Registration'
 		

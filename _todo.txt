@@ -9,6 +9,8 @@ New Features
 - Billing
  - Running Balance Due = Lessons - Payments
  - Report of Statement able to email to parents (possibly PDF?)
+ - New models: Payments, Credits, Charges
+ - New Fields: Lessons:Paid, Lessons:Price?(How to calculate? What about students not belonging to parent?)
 
 
 ================================
@@ -29,7 +31,6 @@ Improvements
 - Note system, Notes should be available for Students, Parents, Lessons, Etc. Public and Private...
 - Add secondary phone number for Parents
 - Consolidate all user account logic into Accounts app
-- Remove separation of employee and parent login?
 - Allow adult students to login and register themselves
 - Rework LessonSlot and Lesson detail page
 - Paginate Student and Parent listings
@@ -46,5 +47,5 @@ Current Projects
 *Parent Registration*
 - Add buttons for Parent Dashboard instead of sidebar links
 - Allow parent to specify notes when registering each student
-- Emergency Contact
+- Add Emergency Contact to household
 
