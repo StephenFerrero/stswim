@@ -157,9 +157,7 @@ class ParentRegistrationForm(forms.Form):
 		new_user.save()
 		#new_user.groups.add(2)
 		
-		
-		
-		if Parent.objects.filter(email=email).count() < 0:
+		if Parent.objects.filter(email=email).count() < 1:
 			new_parent = Parent()
 			new_household = Household()
 			new_household.creation_date = date.today()
@@ -174,11 +172,12 @@ class ParentRegistrationForm(forms.Form):
 			new_parent.city = city
 			new_parent.state = state
 			new_parent.zip_code = zip_code
+			new_parent.user = new_user
 			new_parent.save()
 		else:
-			new_parent = Parent.objects.filter(email=email)
-			
-		new_parent.user_id = new_user.id
+			new_parent = Parent.objects.get(email=email)
+			new_parent.user = new_user
+			new_parent.save()
 		
 		subject = 'Seaturtle Swim School Online Registration'
 		

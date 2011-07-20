@@ -151,8 +151,8 @@ def parentresetpassword(request):
 	
 @login_required
 def parentdashboard(request, parent_id=None):
-		user_id = request.user.id
-		parent = Parent.objects.get(user = user_id)
+		user = request.user
+		parent = Parent.objects.get(user = user)
 		students = Student.objects.filter(household__exact = parent.household)
 		household_lessons = Lesson.objects.filter(students__in = students).order_by('lessonslot').distinct()
 		household_id = parent.household
@@ -160,7 +160,7 @@ def parentdashboard(request, parent_id=None):
 		variables = RequestContext(request, {'parent' : parent,
 										'students' : students,
 										'household_id' : household_id,
-										'user_id' : user_id,
+										'user' : user,
 										'household_lessons' : household_lessons})
 	
 		return render_to_response("schedule/parent_dashboard.html", variables,
