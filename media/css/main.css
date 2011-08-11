@@ -496,6 +496,14 @@ table.detail td {
 }
 
 /** Generic Classes **/
+.note {
+	width: 850px;
+	margin: auto;
+	text-align: center;
+	font-style: italic;
+	padding: 10px 0 10px 0;
+	color: blue;
+}
 
 ul.messages {
 	padding: 10px 0 5px 0;

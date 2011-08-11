@@ -1,9 +1,9 @@
 {% extends 'schedule/parent_manage.html' %}
 
-{% block title %}Parent Management Dashboard{% endblock %}
+{% block title %}Parent Dashboard{% endblock %}
 
 {% block manage_content %}
-	<h2>Parent Management Dashboard:</h2>
+	<h2>Parent Dashboard:</h2>
 	<h3>Your Children:</h3>
 		{% if students %}
 		<table class="data">
@@ -17,13 +17,14 @@
 			{% endfor %}
 		</table>
 		{% else %}
-			<em>No Students</em>
+			<em>No Students have been registered. Please <a href="{% url parent_registerstudent  %}">Register a Student</a>.
 		{% endif %}
 		<br />
 		<br />
 	
 	<h3>Household Lessons:</h3>
 	{% if household_lessons %}
+		<em>Note: Make-up lessons are not allowed, please attend all of your scheduled lessons.</em>
 		<table class="data">
 			<tr><th>Day</th><th>Date</th><th>Start Time</th><th>Type</th><th>Status</th><th>Students</th></tr>
 		{% for lesson in household_lessons %}
@@ -40,4 +41,12 @@
 	{% else %}
 	<em>There are no scheduled lessons for this household.</em>
 	{% endif %}
+	<br />
+	<hr>
+	<div id="Liability_Form" class='textcenter'>
+			<br />
+			<p>A liability form is required for each family. You can download one here:</p>
+
+			<a class="download_button center" href="http://www.seaturtleswim.com/media/files/Liability_Form.pdf">Liability Form</a>
+		</div>
 {% endblock %}

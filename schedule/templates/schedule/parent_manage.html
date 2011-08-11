@@ -9,23 +9,8 @@
 		<li><a href="{% url parent_requestlesson  %}">Request Lessons</a></li>
 		<li><a href="{% url parent_registerstudent  %}">Register Student</a></li>
 		<li><a href="{% url view_currentseason  %}">View Calendar</a></li>
+		<li><a href="http://www.seaturtleswim.com/media/files/Liability_Form.pdf">Liability Form</a></li>
 	</ul>
-	{% if perms.schedule.can_addparent or perms.schedule.can_booklesson or perms.schedule.can_addlessonslot or perms.schedule.can_addseason %}
-		<h3>Tools</h3>
-		<ul class="management_menu">
-			{% if perms.schedule.can_addparent %}
-				<li><a href="{% url add_parent %}">Add Parent</a></li>
-			{% endif %}
-			{% if perms.schedule.can_booklesson %}
-				<li><a href="{% url add_lesson %}">Book Lesson</a></li>
-			{% endif %}
-			{% if perms.schedule.can_addlessonslot %}
-				<li><a href="{% url stswim.schedule.admin_views.addlessonslot %}">Add Lesson Slots</a></li>
-			{% endif %}	
-			{% if perms.schedule.can_addseason %}
-				<li><a href="{% url stswim.schedule.admin_views.addseason %}">Add Season</a></li>
-			{% endif %}
-		{% endif %}
 	
 {% endblock %}
 
