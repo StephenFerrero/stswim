@@ -356,7 +356,6 @@ table.detail td {
 
 .season_month_cal .Sun,
 .season_month_cal .Sat {
-	display: none;
 }
 
 .season_month_cal .today {

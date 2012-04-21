@@ -11,7 +11,7 @@
 <div id="instructor_key">
 	<span class="instructor_purple">Teacher Candace</span><br />
 	<span class="instructor_blue">Teacher Hillary</span><br />
-	<span class="instructor_green">Teacher Alyssa</span><br />
+	<span class="instructor_orange">Teacher Alyssa</span><br />
 </div>
 <div class="note">Note: Make-up lessons are not allowed, please attend all of your scheduled lessons.</div>
 <table class="season_month_cal">
@@ -41,7 +41,7 @@
 						<span class="calendar_lesson_closed">
 					{% else %}
 						<span class="{% ifequal lesson.instructor.first_name "Hillary" %}instructor_blue{% endifequal %}
-							{% ifequal lesson.instructor.first_name "Alyssa" %}instructor_green{% endifequal %}
+							{% ifequal lesson.instructor.first_name "Alyssa" %}instructor_orange{% endifequal %}
 							{% ifequal lesson.instructor.first_name "Candace" %}instructor_purple{% endifequal %}">
 					{% endifequal %}
 						{{ lesson.start_datetime|time:"g:i A" }} -</span>
