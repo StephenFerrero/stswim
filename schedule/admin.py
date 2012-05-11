@@ -1,5 +1,5 @@
 from django.contrib import admin
-from actions import export_as_csv_action
+from stswim.actions import export_as_csv_action
 from stswim.schedule.models import Household, Parent, Student, Employee, Season, Lesson, LessonSlot
 
 class ParentAdmin(admin.ModelAdmin):
