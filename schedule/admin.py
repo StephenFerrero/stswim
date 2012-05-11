@@ -5,7 +5,7 @@ from stswim.schedule.models import Household, Parent, Student, Employee, Season,
 class ParentAdmin(admin.ModelAdmin)
 	list_display = ('first_name', 'last_name','email','phone_number',)
 	actions = [export_as_csv_action("CSV Export", fields=['first_name', 'last_name','email','phone_number','address','address2','city','state','zip_code',])]
-
+admin.site.register(Parent, ParentAdmin)
 
 for model in [Household, Student, Employee, Season, Lesson, LessonSlot,]:
     admin.site.register(model)
